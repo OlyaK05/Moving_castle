@@ -72,9 +72,9 @@ tile_width = tile_height = 50
 horizontal_borders = pygame.sprite.Group()
 vertical_borders = pygame.sprite.Group()
 Border(-25, -25, width, -25)
-Border(-25, height, width, height)
-Border(-25, -25, 0, height)
-Border(width, -25, width, height)
+Border(0, height + 25, width, height+ 25)
+Border(-25, 0, -25, height)
+Border(width + 25, 0, width+25, height)
 
 
 class Tile(pygame.sprite.Sprite):
