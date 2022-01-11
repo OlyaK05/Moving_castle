@@ -5,7 +5,7 @@ import pygame
 pygame.init()
 pygame.mixer.music.load("sky_walk.mp3")
 pygame.mixer.music.play(loops=-1, start=0.0)
-size = width, height = 600, 600
+size = width, height = 750, 700
 screen = pygame.display.set_mode(size)
 
 
