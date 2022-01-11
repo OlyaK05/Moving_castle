@@ -28,11 +28,8 @@ def load_image(name, colorkey=None):
         image = image.convert_alpha()
     return image
 
-
 k = True
-
-
-class Menu():
+class Button():
     def __init__(self, width, height, sign):
         self.widht = width
         self.height = height
@@ -47,31 +44,29 @@ class Menu():
             pygame.draw.rect(screen, self.active_color, (x, y, self.widht, self.height))
             if click[0] == 1:  # нажатие на левую кнопку мыши
                 if self.sign == 1:
-                    pygame.mixer.music.load("button_sound.mp3")
-                    pygame.mixer.music.set_volume(0.04)
-                    pygame.mixer.music.play(loops=0)
-                    start_game()
+                   pygame.mixer.music.load("button_sound.mp3")
+                   pygame.mixer.music.set_volume(0.04)
+                   pygame.mixer.music.play(loops=0)
+                   start_game()
         else:
             pygame.draw.rect(screen, self.inactive_color, (x, y, self.widht, self.height))
         text(message, x + 10, y + 10)
 
-
 def menu():
-    button_start = Menu(150, 110, 1)
-    button_info = Menu(150, 110, 0)
+    button_start = Button(150, 110, 1)
+    button_info =  Button(150, 110, 0)
     background = load_image("bg (1).jpg")
     demonstration = True
     while demonstration:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 demonstration = False
-            if k is False:
-                demonstration = False
 
         screen.blit(background, (0, 0))
-        button_start.draw(300, 200, "Start")
-        button_info.draw(300, 330, "Info")
+        button_start.draw(300, 600, "Start")
+        button_info.draw(300, 530, "Info")
         pygame.display.flip()
+
 
     pygame.quit()
 
