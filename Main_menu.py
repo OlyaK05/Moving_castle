@@ -1,4 +1,5 @@
-import os, sys
+import os
+import sys
 import pygame
 import first_level
 
@@ -7,7 +8,7 @@ size = width, height = 750, 700
 screen = pygame.display.set_mode(size)
 
 
-def text(message, x, y, font_color=(0, 0, 0), font_type='shrift.otf', font_size=80):
+def text(message, x, y, font_color=(0, 0, 0), font_type='shrift.otf', font_size=75):
     front_type = pygame.font.Font(font_type, font_size)
     text = front_type.render(message, True, font_color)
     screen.blit(text, (x, y))
@@ -28,7 +29,7 @@ def load_image(name, colorkey=None):
         image = image.convert_alpha()
     return image
 
-k = True
+
 class Button():
     def __init__(self, width, height, sign):
         self.widht = width
@@ -52,6 +53,7 @@ class Button():
             pygame.draw.rect(screen, self.inactive_color, (x, y, self.widht, self.height))
         text(message, x + 10, y + 10)
 
+
 def menu():
     button_start = Button(150, 110, 1)
     button_info =  Button(150, 110, 0)
@@ -63,15 +65,14 @@ def menu():
                 demonstration = False
 
         screen.blit(background, (0, 0))
-        button_start.draw(300, 600, "Start")
-        button_info.draw(300, 530, "Info")
+        button_start.draw(300, 300, "Start")
+        button_info.draw(300, 430, "Info")
         pygame.display.flip()
-
-
     pygame.quit()
 
 
 def start_game():
+    screen.fill((0,0,0))
     running = True
     while running:
         for event in pygame.event.get():
