@@ -3,8 +3,6 @@ import sys
 import pygame
 
 pygame.init()
-pygame.mixer.music.load("sky_walk.mp3")
-pygame.mixer.music.play(loops=-1, start=0.0)
 size = width, height = 750, 700
 screen = pygame.display.set_mode(size)
 
@@ -67,7 +65,6 @@ class Tile(pygame.sprite.Sprite):
         super().__init__(tile_group)
         self.image = tile_images[tile_type]
         self.rect = self.image.get_rect().move(pos_x * tile_width, pos_y * tile_height)
-        self.image.blit(load_image("firewood.png"), (pos_x * tile_width, pos_y * tile_height))
 
 
 class Let(pygame.sprite.Sprite):
@@ -115,7 +112,7 @@ tile_images = {
 
 }
 
-player_image = load_image("2.png")
+player_image = load_image("fire.png")
 
 all_sprites = pygame.sprite.Group()
 
