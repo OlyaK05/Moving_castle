@@ -59,6 +59,24 @@ class Button():
         text(message, x + 10, y + 10, font_size)
 
 
+class Arrow(pygame.sprite.Sprite):
+    image = load_image("arrow.png")
+
+    def __init__(self, *group):
+        # НЕОБХОДИМО вызвать конструктор родительского класса Sprite.
+        # Это очень важно!!!
+        super().__init__(*group)
+        self.image = Arrow.image
+        self.rect = self.image.get_rect()
+        self.rect.x = 0
+        self.rect.y = 0
+
+    def update(self, x, y):
+        self.rect.x, self.rect.y = x, y
+        if pygame.mouse.get_focused():
+            self.rect = self.rect.move(x - self.rect.x, y - self.rect.y)
+        else:
+            screen.fill("black")
 def menu():
     #pygame.mixer.music.load("sky_walk.mp3")
     #pygame.mixer.music.play(loops=-1, start=0.0)
