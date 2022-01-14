@@ -1,19 +1,19 @@
 import os
 import sys
 import pygame
-import first_level
 import webbrowser
+import first_level
 
 pygame.init()
 size = width, height = 750, 700
 screen = pygame.display.set_mode(size)
 
 
-def text(message, x, y,font_size=75, font_color=(0, 0, 0)):
+def text(message, x, y,font_size=75):
     font_color = (0, 0, 0)
     font_type = 'shrift.otf'
-    front_type = pygame.font.Font(font_type, font_size)
-    text = front_type.render(message, True, font_color)
+    font_result = pygame.font.Font(font_type, font_size)
+    text = font_result.render(message, True, font_color)
     screen.blit(text, (x, y))
 
 
@@ -53,14 +53,15 @@ class Button():
                    pygame.mixer.music.play(loops=0)
                    start_game()
                 if self.sign == 2:
-                    webbrowser.open('https://ru.wikipedia.org/wiki/%D0%A5%D0%BE%D0%B4%D1%8F%D1%87%D0%B8%D0%B9_%D0%B7%D0%B0%D0%BC%D0%BE%D0%BA_(%D0%B0%D0%BD%D0%B8%D0%BC%D0%B5)', new=2)
+                    webbrowser.open('https://ru.wikipedia.org/wiki/%D0%A5%D0%BE%D0%B4%D1%8F%D1%87%D0%B8%D0%B9_%D0%B7%D0'
+                                    '%B0%D0%BC%D0%BE%D0%BA_(%D0%B0%D0%BD%D0%B8%D0%BC%D0%B5)', new=2)
         else:
             pygame.draw.rect(screen, self.inactive_color, (x, y, self.widht, self.height))
         text(message, x + 10, y + 10, font_size)
 
 
 class Arrow(pygame.sprite.Sprite):
-    image = load_image("arrow.png")
+    image = load_image("mouse.png")
 
     def __init__(self, *group):
         # НЕОБХОДИМО вызвать конструктор родительского класса Sprite.
@@ -77,6 +78,7 @@ class Arrow(pygame.sprite.Sprite):
             self.rect = self.rect.move(x - self.rect.x, y - self.rect.y)
         else:
             screen.fill("black")
+
 def menu():
     #pygame.mixer.music.load("sky_walk.mp3")
     #pygame.mixer.music.play(loops=-1, start=0.0)
@@ -84,22 +86,30 @@ def menu():
     button_info =  Button(130, 100, 1)
     button_story = Button(80, 65, 2)
     background = load_image("bg (1).jpg")
+    all_sprites = pygame.sprite.Group()
+    arrow = Arrow(all_sprites)
+    pygame.mouse.set_visible(False)
     demonstration = True
     while demonstration:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 demonstration = False
-
+        if event.type == pygame.MOUSEMOTION:
+            x, y = event.pos
+            all_sprites.update(x, y)
         screen.blit(background, (0, 0))
         button_start.draw(300, 270, "Start",70)
         button_info.draw(300, 390, "Info", 70)
         button_story.draw(10, 600, "Story", 40)
+        all_sprites.draw(screen)
         pygame.display.flip()
     pygame.quit()
 
 
 def start_game():
     screen.fill((0,0,0))
+    all_sprites = pygame.sprite.Group()
+    arrow = Arrow(all_sprites)
     running = True
     while running:
         for event in pygame.event.get():
@@ -107,8 +117,13 @@ def start_game():
                 running = False
             if pygame.key.get_pressed():
                 first_level.all_sprites.update(pygame.key.get_pressed())
+            if event.type == pygame.MOUSEMOTION:
+                x, y = event.pos
+                all_sprites.update(x, y)
         first_level.tile_group.draw(first_level.screen)
+        first_level.achievements_group.draw(first_level.screen)
         first_level.tile_let_group.draw(first_level.screen)
+        all_sprites.draw(screen)
         first_level.player_group.draw(first_level.screen)
         pygame.display.flip()
     pygame.quit()

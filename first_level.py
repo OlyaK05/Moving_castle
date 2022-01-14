@@ -42,6 +42,8 @@ def generate_level(level):
                 Let('wall', x, y)
             elif level[y][x] == "*":
                 Tile('lake', x, y)
+            elif level[y][x] == "a":
+                Achievement('achievements', x, y)
             elif level[y][x] == "@":
                 Tile('empty', x, y)
                 player = Player(x, y)
@@ -59,6 +61,11 @@ class Border(pygame.sprite.Sprite):
             self.image = pygame.Surface([x2 - x1, 1])
             self.rect = pygame.Rect(x1, y1, x2 - x1, 1)
 
+class Achievement(pygame.sprite.Sprite):
+    def __init__(self, tile_type, pos_x, pos_y):
+        super().__init__(achievements_group)
+        self.image = tile_images[tile_type]
+        self.rect = self.image.get_rect().move(pos_x * tile_width, pos_y * tile_height)
 
 class Tile(pygame.sprite.Sprite):
     def __init__(self, tile_type, pos_x, pos_y):
@@ -101,6 +108,9 @@ class Player(pygame.sprite.Sprite):
             self.rect = self.rect.move(-x, -y)
             self.rect.x -= x
             self.rect.y -= y
+        if pygame.sprite.spritecollideany(self, achievements_group):
+            print(self.rect.x, self.rect.y)
+            screen.blit(tile_images['empty'], (self.rect.x, self.rect.y))
 
 
 tile_images = {
@@ -108,15 +118,18 @@ tile_images = {
     'empty': load_image("grass2.jpg"),  # элементы игрового поля
     'wall': load_image("wall.jpg"),
     'lake': load_image("lake.jpg"),
+    'achievements': load_image("firewood.jpg")
     # 'firewood': load_image("firewood.png")
 
 }
 
 player_image = load_image("fire.png")
 
+
 all_sprites = pygame.sprite.Group()
 
 tile_group = pygame.sprite.Group()
+achievements_group = pygame.sprite.Group()
 tile_let_group = pygame.sprite.Group()
 player_group = pygame.sprite.Group()
 
