@@ -5,7 +5,8 @@ import pygame
 pygame.init()
 size = width, height = 750, 700
 screen = pygame.display.set_mode(size)
-
+score = 0
+gave_achiev = []
 
 def load_image(name, colorkey=None):
     fullname = os.path.join("data", name)
@@ -32,6 +33,7 @@ def load_level(filename):
 
     return list(map(lambda x: x.ljust(max_width, "."), level_map))  # ljust дополняем каждую строку до нужной длины
 
+
 def generate_level(level):
     x, y = None, None
     for y in range(len(level)):
@@ -49,6 +51,7 @@ def generate_level(level):
                 player = Player(x, y)
     return player, x, y
 
+
 class Border(pygame.sprite.Sprite):
     def __init__(self, x1, y1, x2, y2):
         super().__init__(all_sprites)
@@ -61,11 +64,20 @@ class Border(pygame.sprite.Sprite):
             self.image = pygame.Surface([x2 - x1, 1])
             self.rect = pygame.Rect(x1, y1, x2 - x1, 1)
 
+
 class Achievement(pygame.sprite.Sprite):
     def __init__(self, tile_type, pos_x, pos_y):
         super().__init__(achievements_group)
         self.image = tile_images[tile_type]
         self.rect = self.image.get_rect().move(pos_x * tile_width, pos_y * tile_height)
+
+
+class GaveAchievement(pygame.sprite.Sprite):
+    def __init__(self, tile_type, pos_x, pos_y):
+        super().__init__(gave_achievement)
+        self.image = tile_images[tile_type]
+        self.rect = self.image.get_rect().move(pos_x - 10, pos_y)
+
 
 class Tile(pygame.sprite.Sprite):
     def __init__(self, tile_type, pos_x, pos_y):
@@ -82,6 +94,7 @@ class Let(pygame.sprite.Sprite):
 
 
 class Player(pygame.sprite.Sprite):
+
     def __init__(self, pos_x, pos_y):
         super().__init__(player_group, all_sprites)
         self.image = player_image
@@ -90,6 +103,8 @@ class Player(pygame.sprite.Sprite):
         self.y = 0
 
     def update(self, action):
+        global score, gave_achiev
+
         x, y = 0, 0
         if action[pygame.K_UP]:
             y = -25
@@ -109,8 +124,10 @@ class Player(pygame.sprite.Sprite):
             self.rect.x -= x
             self.rect.y -= y
         if pygame.sprite.spritecollideany(self, achievements_group):
-            print(self.rect.x, self.rect.y)
-            screen.blit(tile_images['empty'], (self.rect.x, self.rect.y))
+            if (self.rect.x, self.rect.y) not in gave_achiev:
+                score += 1
+                gave_achiev.append((self.rect.x, self.rect.y))
+            GaveAchievement('empty', self.rect.x, self.rect.y)
 
 
 tile_images = {
@@ -125,11 +142,11 @@ tile_images = {
 
 player_image = load_image("fire.png")
 
-
 all_sprites = pygame.sprite.Group()
 
 tile_group = pygame.sprite.Group()
 achievements_group = pygame.sprite.Group()
+gave_achievement = pygame.sprite.Group()
 tile_let_group = pygame.sprite.Group()
 player_group = pygame.sprite.Group()
 
