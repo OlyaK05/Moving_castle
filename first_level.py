@@ -5,8 +5,10 @@ import pygame
 pygame.init()
 size = width, height = 750, 700
 screen = pygame.display.set_mode(size)
-score = 0
+
+score, run = 0, True
 gave_achiev = []
+
 
 def load_image(name, colorkey=None):
     fullname = os.path.join("data", name)
@@ -46,6 +48,8 @@ def generate_level(level):
                 Tile('lake', x, y)
             elif level[y][x] == "a":
                 Achievement('achievements', x, y)
+            elif level[y][x] == "W":
+                Tile('fireplace', x, y)
             elif level[y][x] == "@":
                 Tile('empty', x, y)
                 player = Player(x, y)
@@ -66,6 +70,8 @@ class Border(pygame.sprite.Sprite):
 
 
 class Achievement(pygame.sprite.Sprite):
+    """расположение достижений на холсте"""
+
     def __init__(self, tile_type, pos_x, pos_y):
         super().__init__(achievements_group)
         self.image = tile_images[tile_type]
@@ -73,6 +79,8 @@ class Achievement(pygame.sprite.Sprite):
 
 
 class GaveAchievement(pygame.sprite.Sprite):
+    """полученные достижения"""
+
     def __init__(self, tile_type, pos_x, pos_y):
         super().__init__(gave_achievement)
         self.image = tile_images[tile_type]
@@ -87,6 +95,8 @@ class Tile(pygame.sprite.Sprite):
 
 
 class Let(pygame.sprite.Sprite):
+    """расположение препятствий"""
+
     def __init__(self, tile_type, pos_x, pos_y):
         super().__init__(tile_let_group)
         self.image = tile_images[tile_type]
@@ -94,6 +104,7 @@ class Let(pygame.sprite.Sprite):
 
 
 class Player(pygame.sprite.Sprite):
+    """класс героя"""
 
     def __init__(self, pos_x, pos_y):
         super().__init__(player_group, all_sprites)
@@ -103,7 +114,8 @@ class Player(pygame.sprite.Sprite):
         self.y = 0
 
     def update(self, action):
-        global score, gave_achiev
+        """перемещение героя по карте"""
+        global run, score, gave_achiev
 
         x, y = 0, 0
         if action[pygame.K_UP]:
@@ -120,14 +132,17 @@ class Player(pygame.sprite.Sprite):
         if pygame.sprite.spritecollideany(self, tile_let_group) \
                 or pygame.sprite.spritecollideany(self, horizontal_borders) \
                 or pygame.sprite.spritecollideany(self, vertical_borders):
-            self.rect = self.rect.move(-x, -y)
+            self.rect = self.rect.move(-x, -y)  # при пересечении со спрайтами стенки/препятствия герой не двигается
             self.rect.x -= x
             self.rect.y -= y
         if pygame.sprite.spritecollideany(self, achievements_group):
+            """пересечение со спрайтами достижений"""
             if (self.rect.x, self.rect.y) not in gave_achiev:
                 score += 1
                 gave_achiev.append((self.rect.x, self.rect.y))
             GaveAchievement('empty', self.rect.x, self.rect.y)
+        if self.rect.x == 660 and self.rect.y == 0:
+            run = False
 
 
 tile_images = {
@@ -135,8 +150,8 @@ tile_images = {
     'empty': load_image("grass2.jpg"),  # элементы игрового поля
     'wall': load_image("wall.jpg"),
     'lake': load_image("lake.jpg"),
+    'fireplace': load_image("fireplace.jpg"),
     'achievements': load_image("firewood.jpg")
-    # 'firewood': load_image("firewood.png")
 
 }
 
@@ -152,6 +167,7 @@ player_group = pygame.sprite.Group()
 
 tile_width = tile_height = 50
 
+# границы игрового поля
 horizontal_borders = pygame.sprite.Group()
 vertical_borders = pygame.sprite.Group()
 Border(-25, -25, width, -25)
