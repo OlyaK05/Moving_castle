@@ -27,7 +27,7 @@ def load_image(name, colorkey=None):
     if colorkey is not None:
         image = image.convert()
         if colorkey == -1:
-            colorkey = image.get_at((-10, 0))
+            colorkey = image.get_at((0, 0))
         image.set_colorkey(colorkey)
     else:
         image = image.convert_alpha()
@@ -71,7 +71,7 @@ class Arrow(pygame.sprite.Sprite):
         super().__init__(*group)
         self.image = Arrow.image
         self.rect = self.image.get_rect()
-        self.rect.x = 0
+        self.rect.x = -20
         self.rect.y = 0
 
     def update(self, x, y):
@@ -151,7 +151,7 @@ def start_game():
     screen.fill((0, 0, 0))
     all_sprites = pygame.sprite.Group()
     arrow = Arrow(all_sprites)
-    counter, score, run = 0, first_level.score, first_level.run
+    counter, score, run = 3600, first_level.score, first_level.run
     clock = pygame.time.Clock()
     music_main = pygame.mixer.music.load("first_game.mp3")
     pygame.mixer.music.play(loops=-1)
@@ -174,9 +174,9 @@ def start_game():
         first_level.tile_let_group.draw(first_level.screen)
         first_level.player_group.draw(first_level.screen)
         all_sprites.draw(screen)
-        text(f"Time: {counter // 60}", 5, 5, 21, None, (255, 255, 255))
+        text(f"Time: {counter//60}", 5, 5, 21, None, (255, 255, 255))
         text(f"score: {score}", 85, 5, 21, None, (255, 255, 255))
-        counter += 1
+        counter -= 1
 
         pygame.display.flip()
         clock.tick(60)
