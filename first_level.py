@@ -9,7 +9,6 @@ screen = pygame.display.set_mode(size)
 score, run = 0, True
 gave_achiev = []
 
-
 def load_image(name, colorkey=None):
     fullname = os.path.join("data", name)
     if not os.path.isfile(fullname):
@@ -138,6 +137,10 @@ class Player(pygame.sprite.Sprite):
         if pygame.sprite.spritecollideany(self, achievements_group):
             """пересечение со спрайтами достижений"""
             if (self.rect.x, self.rect.y) not in gave_achiev:
+                fire_sound = pygame.mixer.Sound("ignition of fire.mp3")
+                fire_sound.set_volume(0.03)
+                fire_sound.play()
+
                 score += 1
                 gave_achiev.append((self.rect.x, self.rect.y))
             GaveAchievement('empty', self.rect.x, self.rect.y)

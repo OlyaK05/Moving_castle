@@ -49,10 +49,9 @@ class Button():
         if x < pos[0] < x + self.widht and y < pos[1] < y + self.height:
             pygame.draw.rect(screen, self.active_color, (x, y, self.widht, self.height))
             if click[0] == 1:  # нажатие на левую кнопку мыши
+                button_sound = pygame.mixer.Sound("button_sound.mp3")
+                button_sound.play()
                 if self.sign == 0:
-                    pygame.mixer.music.load("button_sound.mp3")
-                    pygame.mixer.music.set_volume(0.04)
-                    pygame.mixer.music.play(loops=0)
                     start_game()
                 elif self.sign == 2:
                     webbrowser.open('https://ru.wikipedia.org/wiki/%D0%A5%D0%BE%D0%B4%D1%8F%D1%87%D0%B8%D0%B9_%D0%B7%D0'
@@ -108,10 +107,11 @@ db = BaseDate()
 
 def menu():
     """основное меню игры"""
+
     pygame.mouse.set_visible(False)
     background = load_image("bg (1).jpg")
-    # pygame.mixer.music.load("sky_walk.mp3")
-    # pygame.mixer.music.play(loops=-1, start=0.0)
+    pygame.mixer.music.load("sky_walk.mp3")
+    pygame.mixer.music.play(loops=-1)
 
     button_start = Button(130, 100, 0)
     button_info = Button(130, 100, 1)
@@ -153,6 +153,9 @@ def start_game():
     arrow = Arrow(all_sprites)
     counter, score, run = 0, first_level.score, first_level.run
     clock = pygame.time.Clock()
+    music_main = pygame.mixer.music.load("first_game.mp3")
+    pygame.mixer.music.play(loops=-1)
+    pygame.mixer.music.set_volume(0.1)
     running = True
     while running:
         for event in pygame.event.get():
@@ -169,11 +172,12 @@ def start_game():
         first_level.achievements_group.draw(first_level.screen)
         first_level.gave_achievement.draw(first_level.screen)
         first_level.tile_let_group.draw(first_level.screen)
-        all_sprites.draw(screen)
         first_level.player_group.draw(first_level.screen)
+        all_sprites.draw(screen)
         text(f"Time: {counter // 60}", 5, 5, 21, None, (255, 255, 255))
-        text(f"score: {score}", 80, 5, 21, None, (255, 255, 255))
+        text(f"score: {score}", 85, 5, 21, None, (255, 255, 255))
         counter += 1
+
         pygame.display.flip()
         clock.tick(60)
     pygame.quit()
