@@ -36,6 +36,7 @@ def load_image(name, colorkey=None):
 
 class Button():
     """класс кнопок"""
+
     def __init__(self, width, height, sign):
         self.widht = width
         self.height = height
@@ -52,7 +53,9 @@ class Button():
                 button_sound = pygame.mixer.Sound("button_sound.mp3")
                 button_sound.play()
                 if self.sign == 0:
-                    start_game()
+                    start_first_game()
+                elif self.sign == 1:
+                    info()
                 elif self.sign == 2:
                     webbrowser.open('https://ru.wikipedia.org/wiki/%D0%A5%D0%BE%D0%B4%D1%8F%D1%87%D0%B8%D0%B9_%D0%B7%D0'
                                     '%B0%D0%BC%D0%BE%D0%BA_(%D0%B0%D0%BD%D0%B8%D0%BC%D0%B5)', new=2)
@@ -76,10 +79,7 @@ class Arrow(pygame.sprite.Sprite):
 
     def update(self, x, y):
         self.rect.x, self.rect.y = x, y
-        if pygame.mouse.get_focused():
-            self.rect = self.rect.move(x - self.rect.x, y - self.rect.y)
-        else:
-            screen.fill("black")
+        self.rect = self.rect.move(x - self.rect.x, y - self.rect.y)
 
 
 class BaseDate:
@@ -133,12 +133,14 @@ def menu():
         button_start.draw(300, 270, "Start", 70)
         button_info.draw(300, 390, "Info", 70)
         button_story.draw(10, 600, "Story", 40)
-        all_sprites.draw(screen)
+        if pygame.mouse.get_focused():
+            all_sprites.draw(screen)
         pygame.display.flip()
     pygame.quit()
 
 
 def info():
+    running = True
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -146,7 +148,7 @@ def info():
                 running = False
 
 
-def start_game():
+def start_first_game():
     """первый уровень"""
     screen.fill((0, 0, 0))
     all_sprites = pygame.sprite.Group()
@@ -155,13 +157,16 @@ def start_game():
     clock = pygame.time.Clock()
     music_main = pygame.mixer.music.load("first_game.mp3")
     pygame.mixer.music.play(loops=-1)
-    pygame.mixer.music.set_volume(0.1)
+    pygame.mixer.music.set_volume(0.2)
     running = True
     while running:
         for event in pygame.event.get():
-            if event.type == pygame.QUIT or run is False:
+            if event.type == pygame.QUIT:
                 db.close_db()
                 running = False
+            if run is False:
+                # running = False
+                start_second_game()
             if pygame.key.get_pressed():
                 first_level.all_sprites.update(pygame.key.get_pressed())
             if event.type == pygame.MOUSEMOTION:
@@ -173,14 +178,19 @@ def start_game():
         first_level.gave_achievement.draw(first_level.screen)
         first_level.tile_let_group.draw(first_level.screen)
         first_level.player_group.draw(first_level.screen)
-        all_sprites.draw(screen)
-        text(f"Time: {counter//60}", 5, 5, 21, None, (255, 255, 255))
+        if pygame.mouse.get_focused():
+            all_sprites.draw(screen)
+        text(f"Time: {counter // 60}", 5, 5, 21, None, (255, 255, 255))
         text(f"score: {score}", 85, 5, 21, None, (255, 255, 255))
         counter -= 1
-
+        counter
         pygame.display.flip()
         clock.tick(60)
     pygame.quit()
+
+
+def start_second_game():
+    screen.fill((0, 0, 0))
 
 
 menu()

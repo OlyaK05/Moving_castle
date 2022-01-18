@@ -1,6 +1,7 @@
 import os
 import sys
 import pygame
+import random
 
 pygame.init()
 size = width, height = 750, 700
@@ -29,13 +30,59 @@ class Ball(pygame.sprite.Sprite):
         super().__init__(all_sprites)
         self.image = Ball.image
         self.rect = self.image.get_rect()
+        self.rect.x = ran
         self.speed = speed
 
     def update(self, *args):
-        if self.rect.y < args[0] - 20:
+        if self.rect.y < args[0]:
             self.rect.y += self.speed
         else:
-            self.rect.y = 0
+            self.rect.y = -50
+
+    class Player(pygame.sprite.Sprite):
+        """класс героя"""
+        ima
+        def __init__(self, pos_x, pos_y):
+            super().__init__(player_group, all_sprites)
+            self.image = player_image
+            self.rect = self.image.get_rect().move(tile_width * pos_x + 10, tile_height * pos_y)
+            self.x = 0
+            self.y = 0
+
+        def update(self, action):
+            """перемещение героя по карте"""
+            global run, score, gave_achiev
+
+            x, y = 0, 0
+            if action[pygame.K_UP]:
+                y = -25
+            elif action[pygame.K_DOWN]:
+                y = 25
+            elif action[pygame.K_RIGHT]:
+                x = 25
+            elif action[pygame.K_LEFT]:
+                x = -25
+            self.rect = self.rect.move(x, y)
+            self.rect.x += x
+            self.rect.y += y
+            if pygame.sprite.spritecollideany(self, tile_let_group) \
+                    or pygame.sprite.spritecollideany(self, horizontal_borders) \
+                    or pygame.sprite.spritecollideany(self, vertical_borders):
+                self.rect = self.rect.move(-x, -y)  # при пересечении со спрайтами стенки/препятствия герой не двигается
+                self.rect.x -= x
+                self.rect.y -= y
+            if pygame.sprite.spritecollideany(self, achievements_group):
+                """пересечение со спрайтами достижений"""
+                if (self.rect.x, self.rect.y) not in gave_achiev:
+                    fire_sound = pygame.mixer.Sound("ignition of fire.mp3")
+                    fire_sound.set_volume(0.03)
+                    fire_sound.play()
+
+                    score += 1
+                    gave_achiev.append((self.rect.x, self.rect.y))
+                GaveAchievement('empty', self.rect.x, self.rect.y)
+            if self.rect.x == 660 and self.rect.y == 0:
+                run = False
 all_sprites = pygame.sprite.Group()
 clock = pygame.time.Clock()
 speed = 1

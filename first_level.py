@@ -163,6 +163,7 @@ player_image = load_image("fire.png")
 all_sprites = pygame.sprite.Group()
 
 tile_group = pygame.sprite.Group()
+water_let = pygame.sprite.Group()
 achievements_group = pygame.sprite.Group()
 gave_achievement = pygame.sprite.Group()
 tile_let_group = pygame.sprite.Group()
