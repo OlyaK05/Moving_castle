@@ -8,9 +8,11 @@ import sqlite3
 pygame.init()
 size = width, height = 750, 700
 screen = pygame.display.set_mode(size)
+pygame.display.set_caption("Moving Castle")
 
 
 def text(message, x, y, font_size=75, font_type='shrift.otf', font_color=(0, 0, 0)):
+    pygame.init()
     """функция вывода текста на surface"""
     font_result = pygame.font.Font(font_type, font_size)
     texts = font_result.render(message, True, font_color)
@@ -32,6 +34,47 @@ def load_image(name, colorkey=None):
     else:
         image = image.convert_alpha()
     return image
+
+
+class BaseDate:
+    """работа с базой данных"""
+
+    def __init__(self):
+        self.con = sqlite3.connect("DB_results.db")
+        self.cur = self.con.cursor()
+
+    def append_and_get_best_score(self, score, time):
+        """добавление новых значений и возвращение лучшего результата"""
+        s = [score, time]
+        self.cur.execute("""INSERT INTO results VALUES (?, ?)""", s)
+        result = self.cur.execute("""SELECT Score, Time FROM results """).fetchall()
+        self.con.commit()
+        return sorted(result, key=lambda x: (x[0], -x[1]), reverse=True)[0]
+
+    def close_db(self):
+        self.con.close()
+
+
+name = ""
+db = BaseDate()
+
+
+class Arrow(pygame.sprite.Sprite):
+    """класс курсора"""
+
+    image = load_image("mouse.png")
+
+    def __init__(self, *group):
+        # НЕОБХОДИМО вызвать конструктор родительского класса Sprite.
+        super().__init__(*group)
+        self.image = Arrow.image
+        self.rect = self.image.get_rect()
+        self.rect.x = -20
+        self.rect.y = 0
+
+    def update(self, x, y):
+        self.rect.x, self.rect.y = x, y
+        self.rect = self.rect.move(x - self.rect.x, y - self.rect.y)
 
 
 class Button():
@@ -59,55 +102,15 @@ class Button():
                 elif self.sign == 2:
                     webbrowser.open('https://ru.wikipedia.org/wiki/%D0%A5%D0%BE%D0%B4%D1%8F%D1%87%D0%B8%D0%B9_%D0%B7%D0'
                                     '%B0%D0%BC%D0%BE%D0%BA_(%D0%B0%D0%BD%D0%B8%D0%BC%D0%B5)', new=2)
+                elif self.sign == 3:
+                    menu()
         else:
             pygame.draw.rect(screen, self.inactive_color, (x, y, self.widht, self.height))
         text(message, x + 10, y + 10, font_size)
 
 
-class Arrow(pygame.sprite.Sprite):
-    """класс курсора"""
-
-    image = load_image("mouse.png")
-
-    def __init__(self, *group):
-        # НЕОБХОДИМО вызвать конструктор родительского класса Sprite.
-        super().__init__(*group)
-        self.image = Arrow.image
-        self.rect = self.image.get_rect()
-        self.rect.x = -20
-        self.rect.y = 0
-
-    def update(self, x, y):
-        self.rect.x, self.rect.y = x, y
-        self.rect = self.rect.move(x - self.rect.x, y - self.rect.y)
-
-
-class BaseDate:
-    """работа с базой данных"""
-
-    def __init__(self):
-        self.con = sqlite3.connect("DB_results.db")
-        self.cur = self.con.cursor()
-
-    def append_and_get_best_score(self, score, time):
-        """добавление новых значений и возвращение лучшего результата"""
-        s = [score, time]
-        self.cur.execute("""INSERT INTO results VALUES (?, ?)""", s)
-        result = self.cur.execute("""SELECT Score, Time FROM results """).fetchall()
-        self.con.commit()
-        return sorted(result, key=lambda x: (x[0], -x[1]), reverse=True)[0]
-
-    def close_db(self):
-        self.con.close()
-
-
-name = ""
-db = BaseDate()
-
-
 def menu():
     """основное меню игры"""
-
     pygame.mouse.set_visible(False)
     background = load_image("bg (1).jpg")
     pygame.mixer.music.load("sky_walk.mp3")
@@ -119,17 +122,17 @@ def menu():
 
     all_sprites = pygame.sprite.Group()
     arrow = Arrow(all_sprites)
-
     demonstration = True
     while demonstration:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 db.close_db()
                 demonstration = False
-        if event.type == pygame.MOUSEMOTION:
-            x, y = event.pos
-            all_sprites.update(x, y)
+            if event.type == pygame.MOUSEMOTION:
+                x, y = event.pos
+                all_sprites.update(x, y)
         screen.blit(background, (0, 0))
+        text("Moving Castle,", 200, 70, 100)
         button_start.draw(300, 270, "Start", 70)
         button_info.draw(300, 390, "Info", 70)
         button_story.draw(10, 600, "Story", 40)
@@ -140,12 +143,26 @@ def menu():
 
 
 def info():
+    screen.fill((0, 0, 0))
+    background = load_image("background_info.jpg")
     running = True
+    button_enter = Button(70, 60, 3)
+    all_sprites = pygame.sprite.Group()
+    arrow = Arrow(all_sprites)
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 db.close_db()
                 running = False
+            if event.type == pygame.MOUSEMOTION:
+                x, y = event.pos
+                all_sprites.update(x, y)
+        screen.blit(background, (0, 0))
+        button_enter.draw(675, 10, "Enter", 40)
+        if pygame.mouse.get_focused():
+            all_sprites.draw(screen)
+        pygame.display.flip()
+    pygame.quit()
 
 
 def start_first_game():
@@ -165,7 +182,6 @@ def start_first_game():
                 db.close_db()
                 running = False
             if run is False:
-                # running = False
                 start_second_game()
             if pygame.key.get_pressed():
                 first_level.all_sprites.update(pygame.key.get_pressed())
@@ -183,7 +199,6 @@ def start_first_game():
         text(f"Time: {counter // 60}", 5, 5, 21, None, (255, 255, 255))
         text(f"score: {score}", 85, 5, 21, None, (255, 255, 255))
         counter -= 1
-        counter
         pygame.display.flip()
         clock.tick(60)
     pygame.quit()
