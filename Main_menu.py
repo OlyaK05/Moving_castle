@@ -170,7 +170,8 @@ def start_first_game():
     screen.fill((0, 0, 0))
     all_sprites = pygame.sprite.Group()
     arrow = Arrow(all_sprites)
-    counter, score, run = 3600, first_level.score, first_level.run
+    counter, score, run = 0, first_level.score, first_level.run
+    first_level.player, first_level.level_x, first_level.level_y = first_level.generate_level(first_level.load_level("level.txt"))
     clock = pygame.time.Clock()
     music_main = pygame.mixer.music.load("first_game.mp3")
     pygame.mixer.music.play(loops=-1)
@@ -181,8 +182,6 @@ def start_first_game():
             if event.type == pygame.QUIT:
                 db.close_db()
                 running = False
-            if run is False:
-                start_second_game()
             if pygame.key.get_pressed():
                 first_level.all_sprites.update(pygame.key.get_pressed())
             if event.type == pygame.MOUSEMOTION:
@@ -198,14 +197,10 @@ def start_first_game():
             all_sprites.draw(screen)
         text(f"Time: {counter // 60}", 5, 5, 21, None, (255, 255, 255))
         text(f"score: {score}", 85, 5, 21, None, (255, 255, 255))
-        counter -= 1
+        counter += 1
+
         pygame.display.flip()
         clock.tick(60)
     pygame.quit()
-
-
-def start_second_game():
-    screen.fill((0, 0, 0))
-
 
 menu()

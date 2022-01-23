@@ -145,7 +145,7 @@ class Player(pygame.sprite.Sprite):
                 gave_achiev.append((self.rect.x, self.rect.y))
             GaveAchievement('empty', self.rect.x, self.rect.y)
         if self.rect.x == 660 and self.rect.y == 0:
-            run = False
+            player, level_x, level_y = generate_level(load_level("level_2.txt"))
 
 
 tile_images = {
