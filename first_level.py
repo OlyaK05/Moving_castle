@@ -1,7 +1,7 @@
 import os
 import pygame
 from constants import size, width, height
-from load_img import load_image
+from settings import load_image
 
 pygame.init()
 screen = pygame.display.set_mode(size)
@@ -161,3 +161,38 @@ Border(-25, -25, width, -25)
 Border(0, height + 25, width, height + 25)
 Border(-25, 0, -25, height)
 Border(width + 25, 0, width + 25, height)
+
+def start_first_game():
+    """первый уровень"""
+    #pygame.mixer.music.load(os.path.join("music", "first_game.mp3"))
+    #pygame.mixer.music.play(loops=-1)
+    #pygame.mixer.music.set_volume(0.2)
+
+    player, level_x, level_y = generate_level(load_level("level.txt"))
+
+    counter = 0
+    running = True
+    clock = pygame.time.Clock()
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                db.close_db()
+                running = False
+            if pygame.key.get_pressed():
+                all_sprites.update(pygame.key.get_pressed())
+            if event.type == pygame.MOUSEMOTION:
+                x, y = event.pos
+                arrow_sprite.update(x, y)
+        tile_group.draw(screen)
+        achievements_group.draw(screen)
+        gave_achievement.draw(screen)
+        tile_let_group.draw(screen)
+        player_group.draw(screen)
+        if pygame.mouse.get_focused():
+            arrow_sprite.draw(screen)
+        text(f"Time: {counter // 60}", 5, 5, 21, None, (255, 255, 255))
+        text(f"score: {score}", 85, 5, 21, None, (255, 255, 255))
+        counter += 1
+        pygame.display.flip()
+        clock.tick(60)
+    pygame.quit()

@@ -1,9 +1,6 @@
-import os
 import pygame
-import sqlite3
 import webbrowser
-from constants import size
-from load_img import load_image
+from settings import load_image, arrow_sprite, size, db
 from first_level import score, run, generate_level, load_level, tile_group, achievements_group, gave_achievement, \
     tile_let_group, player_group, all_sprites
 
@@ -13,45 +10,6 @@ screen = pygame.display.set_mode(size)
 pygame.display.set_caption("Moving Castle")
 
 
-class BaseDate:
-    """работа с базой данных"""
-
-    def __init__(self):
-        self.con = sqlite3.connect("DB_results.db")
-        self.cur = self.con.cursor()
-
-    def append_and_get_best_score(self, score, time):
-        """добавление новых значений и возвращение лучшего результата"""
-        s = [score, time]
-        self.cur.execute("""INSERT INTO results VALUES (?, ?)""", s)
-        result = self.cur.execute("""SELECT Score, Time FROM results """).fetchall()
-        self.con.commit()
-        return sorted(result, key=lambda x: (x[0], -x[1]), reverse=True)[0]
-
-    def close_db(self):
-        self.con.close()
-
-
-name = ""
-db = BaseDate()
-
-
-class Arrow(pygame.sprite.Sprite):
-    """класс курсора"""
-
-    image = load_image("mouse.png")
-
-    def __init__(self, *group):
-        # НЕОБХОДИМО вызвать конструктор родительского класса Sprite.
-        super().__init__(*group)
-        self.image = Arrow.image
-        self.rect = self.image.get_rect()
-        self.rect.x = -20
-        self.rect.y = 0
-
-    def update(self, x, y):
-        self.rect.x, self.rect.y = x, y
-        self.rect = self.rect.move(x - self.rect.x, y - self.rect.y)
 
 
 class Button:
@@ -70,9 +28,10 @@ class Button:
         if x < pos[0] < x + self.widht and y < pos[1] < y + self.height:
             pygame.draw.rect(screen, self.active_color, (x, y, self.widht, self.height))
             if click[0] == 1:  # нажатие на левую кнопку мыши
-                button_sound = pygame.mixer.Sound(os.path.join("music", "button_sound.mp3"))
-                button_sound.play()
+                # button_sound = pygame.mixer.Sound(os.path.join("music", "button_sound.mp3"))
+                # button_sound.play()
                 if self.sign == 0:
+                    #controller()
                     start_first_game()
                 elif self.sign == 1:
                     info()
@@ -96,16 +55,14 @@ def text(message, x, y, font_size=75, font_type='shrift.otf', font_color=(0, 0, 
 def show_menu():
     """основное меню игры"""
     background = load_image("bg (1).jpg")
-    pygame.mixer.music.load(os.path.join("music", "sky_walk.mp3"))
-    pygame.mixer.music.play(loops=-1)
+   # pygame.mixer.music.load(os.path.join("music", "sky_walk.mp3"))
+    #pygame.mixer.music.play(loops=-1)
 
     button_start = Button(130, 100, 0)
     button_info = Button(130, 100, 1)
     button_story = Button(80, 65, 2)
 
     demonstration = True
-    all_sprites = pygame.sprite.Group()
-    arrow = Arrow(all_sprites)
     while demonstration:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -113,14 +70,14 @@ def show_menu():
                 demonstration = False
             if event.type == pygame.MOUSEMOTION:
                 x, y = event.pos
-                all_sprites.update(x, y)
+                arrow_sprite.update(x, y)
         screen.blit(background, (0, 0))
         text("Moving Castle,", 200, 70, 100)
         button_start.draw(300, 270, "Start", 70)
         button_info.draw(300, 390, "Info", 70)
         button_story.draw(10, 600, "Story", 40)
         if pygame.mouse.get_focused():
-            all_sprites.draw(screen)
+            arrow_sprite.draw(screen)
         pygame.display.flip()
     pygame.quit()
 
@@ -131,8 +88,6 @@ def info():
     button_enter = Button(70, 60, 3)
 
     running = True
-    all_sprites = pygame.sprite.Group()
-    arrow = Arrow(all_sprites)
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -140,11 +95,11 @@ def info():
                 running = False
             if event.type == pygame.MOUSEMOTION:
                 x, y = event.pos
-                all_sprites.update(x, y)
+                arrow_sprite.update(x, y)
         screen.blit(background, (0, 0))
         button_enter.draw(675, 10, "Enter", 40)
         if pygame.mouse.get_focused():
-            all_sprites.draw(screen)
+            arrow_sprite.draw(screen)
         pygame.display.flip()
     pygame.quit()
 
@@ -152,14 +107,11 @@ def info():
 def start_first_game():
     """первый уровень"""
 
-    pygame.mixer.music.load(os.path.join("music", "first_game.mp3"))
-    pygame.mixer.music.play(loops=-1)
-    pygame.mixer.music.set_volume(0.2)
+    #pygame.mixer.music.load(os.path.join("music", "first_game.mp3"))
+    #pygame.mixer.music.play(loops=-1)
+    #pygame.mixer.music.set_volume(0.2)
 
     player, level_x, level_y = generate_level(load_level("level.txt"))
-
-    arrow_sprite = pygame.sprite.Group()
-    arrow = Arrow(arrow_sprite)
 
     counter = 0
     running = True
@@ -189,4 +141,9 @@ def start_first_game():
     pygame.quit()
 
 
+#def level_controller():
+
 show_menu()
+
+
+
