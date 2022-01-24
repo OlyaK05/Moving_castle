@@ -9,6 +9,7 @@ score, run = 0, True
 gave_achiev = []
 pygame.mouse.set_visible(False)
 
+
 def load_level(filename):
     filename = os.path.join("data", filename)
     with open(filename, "r") as mapFile:
@@ -123,7 +124,7 @@ class Player(pygame.sprite.Sprite):
         if pygame.sprite.spritecollideany(self, achievements_group):
             """пересечение со спрайтами достижений"""
             if (self.rect.x, self.rect.y) not in gave_achiev:
-                fire_sound = pygame.mixer.Sound("ignition of fire.mp3")
+                fire_sound = pygame.mixer.Sound(os.path.join("music", "fire_sounds.mp3"))
                 fire_sound.set_volume(0.03)
                 fire_sound.play()
                 score += 1
@@ -133,13 +134,13 @@ class Player(pygame.sprite.Sprite):
 
 tile_images = {
 
-        'empty': load_image("grass2.jpg"),  # элементы игрового поля
-        'wall': load_image("wall.jpg"),
-        'lake': load_image("lake.jpg"),
-        'fireplace': load_image("fireplace.jpg"),
-        'achievements': load_image("firewood.jpg")
+    'empty': load_image("grass2.jpg"),  # элементы игрового поля
+    'wall': load_image("wall.jpg"),
+    'lake': load_image("lake.jpg"),
+    'fireplace': load_image("fireplace.jpg"),
+    'achievements': load_image("firewood.jpg")
 
-    }
+}
 player_image = load_image("fire.png")
 
 all_sprites = pygame.sprite.Group()

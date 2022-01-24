@@ -1,8 +1,9 @@
+import os
 import pygame
 import sqlite3
 import webbrowser
-from load_img import load_image
 from constants import size
+from load_img import load_image
 from first_level import score, run, generate_level, load_level, tile_group, achievements_group, gave_achievement, \
     tile_let_group, player_group, all_sprites
 
@@ -55,6 +56,7 @@ class Arrow(pygame.sprite.Sprite):
 
 class Button:
     """класс кнопок"""
+
     def __init__(self, width, height, sign):
         self.widht = width
         self.height = height
@@ -68,7 +70,7 @@ class Button:
         if x < pos[0] < x + self.widht and y < pos[1] < y + self.height:
             pygame.draw.rect(screen, self.active_color, (x, y, self.widht, self.height))
             if click[0] == 1:  # нажатие на левую кнопку мыши
-                button_sound = pygame.mixer.Sound("button_sound.mp3")
+                button_sound = pygame.mixer.Sound(os.path.join("music", "button_sound.mp3"))
                 button_sound.play()
                 if self.sign == 0:
                     start_first_game()
@@ -94,7 +96,7 @@ def text(message, x, y, font_size=75, font_type='shrift.otf', font_color=(0, 0, 
 def show_menu():
     """основное меню игры"""
     background = load_image("bg (1).jpg")
-    pygame.mixer.music.load("sky_walk.mp3")
+    pygame.mixer.music.load(os.path.join("music", "sky_walk.mp3"))
     pygame.mixer.music.play(loops=-1)
 
     button_start = Button(130, 100, 0)
@@ -150,7 +152,7 @@ def info():
 def start_first_game():
     """первый уровень"""
 
-    pygame.mixer.music.load("first_game.mp3")
+    pygame.mixer.music.load(os.path.join("music", "first_game.mp3"))
     pygame.mixer.music.play(loops=-1)
     pygame.mixer.music.set_volume(0.2)
 
