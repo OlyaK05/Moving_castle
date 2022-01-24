@@ -1,15 +1,11 @@
 import pygame
 import webbrowser
-from settings import load_image, arrow_sprite, size, db
-from first_level import score, run, generate_level, load_level, tile_group, achievements_group, gave_achievement, \
-    tile_let_group, player_group, all_sprites
+from levels import start_first_game
+from settings import load_image, arrow_sprite, db, text, screen
 
 pygame.init()
 pygame.mouse.set_visible(False)
-screen = pygame.display.set_mode(size)
 pygame.display.set_caption("Moving Castle")
-
-
 
 
 class Button:
@@ -31,7 +27,6 @@ class Button:
                 # button_sound = pygame.mixer.Sound(os.path.join("music", "button_sound.mp3"))
                 # button_sound.play()
                 if self.sign == 0:
-                    #controller()
                     start_first_game()
                 elif self.sign == 1:
                     info()
@@ -45,18 +40,11 @@ class Button:
         text(message, x + 10, y + 10, font_size)
 
 
-def text(message, x, y, font_size=75, font_type='shrift.otf', font_color=(0, 0, 0)):
-    """функция вывода текста на surface"""
-    font_result = pygame.font.Font(font_type, font_size)
-    texts = font_result.render(message, True, font_color)
-    screen.blit(texts, (x, y))
-
-
 def show_menu():
     """основное меню игры"""
     background = load_image("bg (1).jpg")
-   # pygame.mixer.music.load(os.path.join("music", "sky_walk.mp3"))
-    #pygame.mixer.music.play(loops=-1)
+    # pygame.mixer.music.load(os.path.join("music", "sky_walk.mp3"))
+    # pygame.mixer.music.play(loops=-1)
 
     button_start = Button(130, 100, 0)
     button_info = Button(130, 100, 1)
@@ -103,47 +91,6 @@ def info():
         pygame.display.flip()
     pygame.quit()
 
-
-def start_first_game():
-    """первый уровень"""
-
-    #pygame.mixer.music.load(os.path.join("music", "first_game.mp3"))
-    #pygame.mixer.music.play(loops=-1)
-    #pygame.mixer.music.set_volume(0.2)
-
-    player, level_x, level_y = generate_level(load_level("level.txt"))
-
-    counter = 0
-    running = True
-    clock = pygame.time.Clock()
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                db.close_db()
-                running = False
-            if pygame.key.get_pressed():
-                all_sprites.update(pygame.key.get_pressed())
-            if event.type == pygame.MOUSEMOTION:
-                x, y = event.pos
-                arrow_sprite.update(x, y)
-        tile_group.draw(screen)
-        achievements_group.draw(screen)
-        gave_achievement.draw(screen)
-        tile_let_group.draw(screen)
-        player_group.draw(screen)
-        if pygame.mouse.get_focused():
-            arrow_sprite.draw(screen)
-        text(f"Time: {counter // 60}", 5, 5, 21, None, (255, 255, 255))
-        text(f"score: {score}", 85, 5, 21, None, (255, 255, 255))
-        counter += 1
-        pygame.display.flip()
-        clock.tick(60)
-    pygame.quit()
-
-
-#def level_controller():
+# def level_controller():
 
 show_menu()
-
-
-

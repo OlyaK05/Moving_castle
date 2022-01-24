@@ -1,7 +1,6 @@
 import os
 import pygame
-from constants import size, width, height
-from settings import load_image
+from settings import load_image, size, width, height, db, arrow_sprite, text
 
 pygame.init()
 screen = pygame.display.set_mode(size)
@@ -162,13 +161,17 @@ Border(0, height + 25, width, height + 25)
 Border(-25, 0, -25, height)
 Border(width + 25, 0, width + 25, height)
 
+
+# def level_controller():
+# """generation level"""
+
 def start_first_game():
     """первый уровень"""
-    #pygame.mixer.music.load(os.path.join("music", "first_game.mp3"))
-    #pygame.mixer.music.play(loops=-1)
-    #pygame.mixer.music.set_volume(0.2)
+    # pygame.mixer.music.load(os.path.join("music", "first_game.mp3"))
+    # pygame.mixer.music.play(loops=-1)
+    # pygame.mixer.music.set_volume(0.2)
 
-    player, level_x, level_y = generate_level(load_level("level.txt"))
+    generate_level(load_level("level.txt"))
 
     counter = 0
     running = True
