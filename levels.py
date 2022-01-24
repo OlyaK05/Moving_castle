@@ -1,11 +1,10 @@
 import os
 import pygame
-from settings import load_image, size, width, height, db, arrow_sprite, text
+from settings import load_image, width, height, db, arrow_sprite, text, screen
 
 pygame.init()
-screen = pygame.display.set_mode(size)
 score, run = 0, True
-gave_achiev = []
+received_pos= []
 pygame.mouse.set_visible(False)
 
 
@@ -98,7 +97,7 @@ class Player(pygame.sprite.Sprite):
 
     def update(self, action):
         """перемещение героя по карте"""
-        global run, score, gave_achiev
+        global run, score
 
         x, y = 0, 0
         if action[pygame.K_UP]:
@@ -121,13 +120,12 @@ class Player(pygame.sprite.Sprite):
             self.rect.y -= y
 
         if pygame.sprite.spritecollideany(self, achievements_group):
-            """пересечение со спрайтами достижений"""
-            if (self.rect.x, self.rect.y) not in gave_achiev:
+            if (self.rect.x, self.rect.y) not in received_pos:
                 fire_sound = pygame.mixer.Sound(os.path.join("music", "fire_sounds.mp3"))
                 fire_sound.set_volume(0.03)
                 fire_sound.play()
                 score += 1
-                gave_achiev.append((self.rect.x, self.rect.y))
+                received_pos.append((self.rect.x, self.rect.y))
             GaveAchievement('empty', self.rect.x, self.rect.y)
 
 
@@ -140,6 +138,7 @@ tile_images = {
     'achievements': load_image("firewood.jpg")
 
 }
+
 player_image = load_image("fire.png")
 
 all_sprites = pygame.sprite.Group()
