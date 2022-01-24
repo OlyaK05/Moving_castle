@@ -1,29 +1,13 @@
 import os
-import sys
 import pygame
+from constants import size, width, height
+from load_img import load_image
 
 pygame.init()
-size = width, height = 750, 700
 screen = pygame.display.set_mode(size)
-
 score, run = 0, True
 gave_achiev = []
-
-def load_image(name, colorkey=None):
-    fullname = os.path.join("data", name)
-    if not os.path.isfile(fullname):
-        print("Не найдено:/")
-        sys.exit()
-    image = pygame.image.load(fullname)
-    if colorkey is not None:
-        image = image.convert()
-        if colorkey == -1:
-            colorkey = image.get_at((0, 0))
-        image.set_colorkey(colorkey)
-    else:
-        image = image.convert_alpha()
-    return image
-
+pygame.mouse.set_visible(False)
 
 def load_level(filename):
     filename = os.path.join("data", filename)
@@ -128,36 +112,34 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.rect.move(x, y)
         self.rect.x += x
         self.rect.y += y
+
         if pygame.sprite.spritecollideany(self, tile_let_group) \
                 or pygame.sprite.spritecollideany(self, horizontal_borders) \
                 or pygame.sprite.spritecollideany(self, vertical_borders):
             self.rect = self.rect.move(-x, -y)  # при пересечении со спрайтами стенки/препятствия герой не двигается
             self.rect.x -= x
             self.rect.y -= y
+
         if pygame.sprite.spritecollideany(self, achievements_group):
             """пересечение со спрайтами достижений"""
             if (self.rect.x, self.rect.y) not in gave_achiev:
                 fire_sound = pygame.mixer.Sound("ignition of fire.mp3")
                 fire_sound.set_volume(0.03)
                 fire_sound.play()
-
                 score += 1
                 gave_achiev.append((self.rect.x, self.rect.y))
             GaveAchievement('empty', self.rect.x, self.rect.y)
-        if self.rect.x == 660 and self.rect.y == 0:
-            player, level_x, level_y = generate_level(load_level("level_2.txt"))
 
 
 tile_images = {
 
-    'empty': load_image("grass2.jpg"),  # элементы игрового поля
-    'wall': load_image("wall.jpg"),
-    'lake': load_image("lake.jpg"),
-    'fireplace': load_image("fireplace.jpg"),
-    'achievements': load_image("firewood.jpg")
+        'empty': load_image("grass2.jpg"),  # элементы игрового поля
+        'wall': load_image("wall.jpg"),
+        'lake': load_image("lake.jpg"),
+        'fireplace': load_image("fireplace.jpg"),
+        'achievements': load_image("firewood.jpg")
 
-}
-
+    }
 player_image = load_image("fire.png")
 
 all_sprites = pygame.sprite.Group()
@@ -178,5 +160,3 @@ Border(-25, -25, width, -25)
 Border(0, height + 25, width, height + 25)
 Border(-25, 0, -25, height)
 Border(width + 25, 0, width + 25, height)
-
-player, level_x, level_y = generate_level(load_level("level.txt"))
