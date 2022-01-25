@@ -1,6 +1,6 @@
 import pygame
 import webbrowser
-from levels import start_first_game
+from levels import level_controller
 from settings import load_image, arrow_sprite, db, text, screen
 
 pygame.init()
@@ -27,7 +27,7 @@ class Button:
                 # button_sound = pygame.mixer.Sound(os.path.join("music", "button_sound.mp3"))
                 # button_sound.play()
                 if self.sign == 0:
-                    start_first_game()
+                    level_controller()
                 elif self.sign == 1:
                     info()
                 elif self.sign == 2:
@@ -91,6 +91,5 @@ def info():
         pygame.display.flip()
     pygame.quit()
 
-# def level_controller():
 
 show_menu()

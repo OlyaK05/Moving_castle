@@ -4,8 +4,10 @@ from settings import load_image, width, height, db, arrow_sprite, text, screen
 
 pygame.init()
 score, run = 0, True
-received_pos= []
+received_pos = []
 pygame.mouse.set_visible(False)
+control = 1
+level_names = ["level_1.txt", "level_2.txt"]
 
 
 def load_level(filename):
@@ -19,7 +21,7 @@ def load_level(filename):
 
 
 def generate_level(level):
-    x, y = None, None
+    x, y, player = None, None, None
     for y in range(len(level)):
         for x in range(len(level[y])):
             if level[y][x] == ".":
@@ -97,7 +99,7 @@ class Player(pygame.sprite.Sprite):
 
     def update(self, action):
         """перемещение героя по карте"""
-        global run, score
+        global run, score, control
 
         x, y = 0, 0
         if action[pygame.K_UP]:
@@ -127,7 +129,8 @@ class Player(pygame.sprite.Sprite):
                 score += 1
                 received_pos.append((self.rect.x, self.rect.y))
             GaveAchievement('empty', self.rect.x, self.rect.y)
-
+        if self.rect.x == 660 and self.rect.y == 0:
+            control += 1
 
 tile_images = {
 
@@ -161,18 +164,28 @@ Border(-25, 0, -25, height)
 Border(width + 25, 0, width + 25, height)
 
 
-# def level_controller():
+def level_controller():
+    global control, level_names
+    if control == 1:
+        start_first_game(level_names[0])
+    if control == 2:
+        start_first_game(level_names[1])
+    #if control == 3:
+        #start_first_game(level_names[2])
+    return
+
+
 # """generation level"""
 
-def start_first_game():
+def start_first_game(level_name):
     """первый уровень"""
     # pygame.mixer.music.load(os.path.join("music", "first_game.mp3"))
     # pygame.mixer.music.play(loops=-1)
     # pygame.mixer.music.set_volume(0.2)
-
-    generate_level(load_level("level.txt"))
+    player, x, y = generate_level(load_level(level_name))
 
     counter = 0
+    start_control = control
     running = True
     clock = pygame.time.Clock()
     while running:
@@ -180,6 +193,8 @@ def start_first_game():
             if event.type == pygame.QUIT:
                 db.close_db()
                 running = False
+            if start_control != control:
+                return
             if pygame.key.get_pressed():
                 all_sprites.update(pygame.key.get_pressed())
             if event.type == pygame.MOUSEMOTION:
