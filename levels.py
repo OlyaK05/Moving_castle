@@ -150,8 +150,8 @@ class Player(pygame.sprite.Sprite):
 
 tile_images = {
 
-    'empty': load_image("grass2.jpg"),  # элементы игрового поля
-    'wall': load_image("wall.jpg"),
+    'empty': load_image("grass.jpg"),  # элементы игрового поля
+    'wall': load_image("wall_2.jpg"),
     'lake': load_image("lake.jpg"),
     'fireplace': load_image("fireplace.jpg"),
     'achievements': load_image("firewood.jpg")
