@@ -28,6 +28,7 @@ class Button:
             pygame.draw.rect(screen, self.active_color, (x, y, self.widht, self.height))
             if click[0] == 1:  # нажатие на левую кнопку мыши
                 button_sound = pygame.mixer.Sound(os.path.join("music", "button_sound.mp3"))
+                button_sound.set_volume(0.1)
                 button_sound.play()
                 if self.sign == 0:
                     level_controller()

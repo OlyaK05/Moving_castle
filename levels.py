@@ -10,6 +10,7 @@ counter = 0
 control = 1
 received_pos = []
 level_names = ["level_1.txt", "level_2.txt", "level_3.txt"]
+music_names = ["level_1.mp3", "level_2.mp3", "level_3.mp3"]
 
 
 def load_level(filename):
@@ -27,17 +28,17 @@ def generate_level(level):
     for y in range(len(level)):
         for x in range(len(level[y])):
             if level[y][x] == ".":
-                Tile('empty', x, y)
+                BackGround('empty', x, y)
             elif level[y][x] == "#":
                 Let('wall', x, y)
             elif level[y][x] == "*":
-                Tile('lake', x, y)
+                BackGround('lake', x, y)
             elif level[y][x] == "a":
                 Achievement('achievements', x, y)
             elif level[y][x] == "W":
                 Finish('fireplace', x, y)
             elif level[y][x] == "@":
-                Tile('empty', x, y)
+                BackGround('empty', x, y)
                 player = Player(x, y)
     return player, x, y
 
@@ -75,9 +76,9 @@ class GaveAchievement(pygame.sprite.Sprite):
         self.rect = self.image.get_rect().move(pos_x - 10, pos_y)
 
 
-class Tile(pygame.sprite.Sprite):
+class BackGround(pygame.sprite.Sprite):
     def __init__(self, tile_type, pos_x, pos_y):
-        super().__init__(tile_group)
+        super().__init__(bg_group)
         self.image = tile_images[tile_type]
         self.rect = self.image.get_rect().move(pos_x * tile_width, pos_y * tile_height)
 
@@ -159,14 +160,14 @@ tile_images = {
 
 player_image = load_image("fire.png")
 
+player_group = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
-tile_group = pygame.sprite.Group()
+bg_group = pygame.sprite.Group()
 finish_group = pygame.sprite.Group()
 water_let = pygame.sprite.Group()
 achievements_group = pygame.sprite.Group()
 gave_achievement = pygame.sprite.Group()
 tile_let_group = pygame.sprite.Group()
-player_group = pygame.sprite.Group()
 
 tile_width = tile_height = 50
 
@@ -184,25 +185,26 @@ def level_controller():
     global control, level_names
 
     if control == 1:
-        start_game(level_names[0])
+        start_game(level_names[0], music_names[0])
     if control == 2:
-        start_game(level_names[1])
+        start_game(level_names[1], music_names[1])
     if control == 3:
-        start_game(level_names[2])
+        start_game(level_names[2], music_names[2])
     terminate()
     # return
 
 
-def start_game(level_name):
+def start_game(level_name, music_name):
     """основная игра"""
-    global counter, score
+    global counter, score, received_pos
 
-    pygame.mixer.music.load(os.path.join("music", "first_game.mp3"))
+    pygame.mixer.music.load(os.path.join("music", music_name))
     pygame.mixer.music.play(loops=-1)
     pygame.mixer.music.set_volume(0.2)
 
     player, x, y = generate_level(load_level(level_name))
     running = True
+    received_pos = []
     start_control = control
     clock = pygame.time.Clock()
     while running:
@@ -212,7 +214,7 @@ def start_game(level_name):
                 terminate()
                 break
             if start_control != control:
-                tile_group.empty()
+                bg_group.empty()
                 achievements_group.empty()
                 gave_achievement.empty()
                 tile_let_group.empty()
@@ -228,7 +230,7 @@ def start_game(level_name):
                 running = False
                 terminate()
         if running:
-            tile_group.draw(screen)
+            bg_group.draw(screen)
             achievements_group.draw(screen)
             gave_achievement.draw(screen)
             tile_let_group.draw(screen)
