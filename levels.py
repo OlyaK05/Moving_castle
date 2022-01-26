@@ -1,13 +1,15 @@
 import os
 import pygame
-from settings import load_image, width, height, db, arrow_sprite, text, screen
+from settings import load_image, width, height, arrow_sprite, text, screen, terminate
 
 pygame.init()
-score, run = 0, True
-received_pos = []
 pygame.mouse.set_visible(False)
+
+score = 0
+counter = 0
 control = 1
-level_names = ["level_1.txt", "level_2.txt"]
+received_pos = []
+level_names = ["level_1.txt", "level_2.txt", "level_3.txt"]
 
 
 def load_level(filename):
@@ -17,7 +19,7 @@ def load_level(filename):
 
     max_width = max(map(len, level_map))  # самая длинная строка
 
-    return list(map(lambda x: x.ljust(max_width, "."), level_map))  # ljust дополняем каждую строку до нужной длины
+    return list(map(lambda x: x.ljust(max_width, "."), level_map))  # дополняем каждую строку до нужной длины
 
 
 def generate_level(level):
@@ -94,12 +96,12 @@ class Player(pygame.sprite.Sprite):
         super().__init__(player_group, all_sprites)
         self.image = player_image
         self.rect = self.image.get_rect().move(tile_width * pos_x + 10, tile_height * pos_y)
-        self.x = 0
-        self.y = 0
+        self.rect.x = 10
+        self.rect.y = 0
 
     def update(self, action):
         """перемещение героя по карте"""
-        global run, score, control
+        global score, control
 
         x, y = 0, 0
         if action[pygame.K_UP]:
@@ -129,8 +131,10 @@ class Player(pygame.sprite.Sprite):
                 score += 1
                 received_pos.append((self.rect.x, self.rect.y))
             GaveAchievement('empty', self.rect.x, self.rect.y)
+
         if self.rect.x == 660 and self.rect.y == 0:
             control += 1
+
 
 tile_images = {
 
@@ -165,51 +169,63 @@ Border(width + 25, 0, width + 25, height)
 
 
 def level_controller():
+    """generation level"""
     global control, level_names
+
     if control == 1:
-        start_first_game(level_names[0])
+        start_game(level_names[0])
     if control == 2:
-        start_first_game(level_names[1])
-    #if control == 3:
-        #start_first_game(level_names[2])
-    return
+        start_game(level_names[1])
+    if control == 3:
+        print(1)
+        start_game(level_names[2])
+    terminate()
+    # return
 
 
-# """generation level"""
+def start_game(level_name):
+    """основная игра"""
+    global counter, score
 
-def start_first_game(level_name):
-    """первый уровень"""
-    # pygame.mixer.music.load(os.path.join("music", "first_game.mp3"))
-    # pygame.mixer.music.play(loops=-1)
-    # pygame.mixer.music.set_volume(0.2)
+    pygame.mixer.music.load(os.path.join("music", "first_game.mp3"))
+    pygame.mixer.music.play(loops=-1)
+    pygame.mixer.music.set_volume(0.2)
+
     player, x, y = generate_level(load_level(level_name))
-
-    counter = 0
     start_control = control
     running = True
     clock = pygame.time.Clock()
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                db.close_db()
                 running = False
+                terminate()
+                break
             if start_control != control:
+                tile_group.empty()
+                achievements_group.empty()
+                gave_achievement.empty()
+                tile_let_group.empty()
+                player_group.empty()
                 return
             if pygame.key.get_pressed():
                 all_sprites.update(pygame.key.get_pressed())
             if event.type == pygame.MOUSEMOTION:
                 x, y = event.pos
                 arrow_sprite.update(x, y)
-        tile_group.draw(screen)
-        achievements_group.draw(screen)
-        gave_achievement.draw(screen)
-        tile_let_group.draw(screen)
-        player_group.draw(screen)
-        if pygame.mouse.get_focused():
-            arrow_sprite.draw(screen)
-        text(f"Time: {counter // 60}", 5, 5, 21, None, (255, 255, 255))
-        text(f"score: {score}", 85, 5, 21, None, (255, 255, 255))
-        counter += 1
-        pygame.display.flip()
-        clock.tick(60)
-    pygame.quit()
+            if event.type == pygame.QUIT:
+                running = False
+                terminate()
+        if running:
+            tile_group.draw(screen)
+            achievements_group.draw(screen)
+            gave_achievement.draw(screen)
+            tile_let_group.draw(screen)
+            player_group.draw(screen)
+            if pygame.mouse.get_focused():
+                arrow_sprite.draw(screen)
+            text(f"Time: {counter // 60}", 5, 5, 21, None, (255, 255, 255))
+            text(f"score: {score}", 85, 5, 21, None, (255, 255, 255))
+            counter += 1
+            pygame.display.flip()
+            clock.tick(60)

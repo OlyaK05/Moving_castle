@@ -68,6 +68,12 @@ class BaseDate:
         self.con.close()
 
 
+def terminate():
+    db.close_db()
+    pygame.quit()
+    return
+
+
 arrow_sprite = pygame.sprite.Group()
 Arrow(arrow_sprite)
 
