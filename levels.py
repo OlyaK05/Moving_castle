@@ -35,7 +35,7 @@ def generate_level(level):
             elif level[y][x] == "a":
                 Achievement('achievements', x, y)
             elif level[y][x] == "W":
-                Tile('fireplace', x, y)
+                Finish('fireplace', x, y)
             elif level[y][x] == "@":
                 Tile('empty', x, y)
                 player = Player(x, y)
@@ -43,6 +43,8 @@ def generate_level(level):
 
 
 class Border(pygame.sprite.Sprite):
+    """границы карты"""
+
     def __init__(self, x1, y1, x2, y2):
         super().__init__(all_sprites)
         if x1 == x2:  # вертикальная стенка
@@ -56,7 +58,7 @@ class Border(pygame.sprite.Sprite):
 
 
 class Achievement(pygame.sprite.Sprite):
-    """расположение достижений на холсте"""
+    """достижения"""
 
     def __init__(self, tile_type, pos_x, pos_y):
         super().__init__(achievements_group)
@@ -85,6 +87,15 @@ class Let(pygame.sprite.Sprite):
 
     def __init__(self, tile_type, pos_x, pos_y):
         super().__init__(tile_let_group)
+        self.image = tile_images[tile_type]
+        self.rect = self.image.get_rect().move(pos_x * tile_width, pos_y * tile_height)
+
+
+class Finish(pygame.sprite.Sprite):
+    """финишная черта"""
+
+    def __init__(self, tile_type, pos_x, pos_y):
+        super().__init__(finish_group)
         self.image = tile_images[tile_type]
         self.rect = self.image.get_rect().move(pos_x * tile_width, pos_y * tile_height)
 
@@ -132,7 +143,7 @@ class Player(pygame.sprite.Sprite):
                 received_pos.append((self.rect.x, self.rect.y))
             GaveAchievement('empty', self.rect.x, self.rect.y)
 
-        if self.rect.x == 660 and self.rect.y == 0:
+        if pygame.sprite.spritecollideany(self, finish_group):
             control += 1
 
 
@@ -149,8 +160,8 @@ tile_images = {
 player_image = load_image("fire.png")
 
 all_sprites = pygame.sprite.Group()
-
 tile_group = pygame.sprite.Group()
+finish_group = pygame.sprite.Group()
 water_let = pygame.sprite.Group()
 achievements_group = pygame.sprite.Group()
 gave_achievement = pygame.sprite.Group()
@@ -177,7 +188,6 @@ def level_controller():
     if control == 2:
         start_game(level_names[1])
     if control == 3:
-        print(1)
         start_game(level_names[2])
     terminate()
     # return
@@ -192,8 +202,8 @@ def start_game(level_name):
     pygame.mixer.music.set_volume(0.2)
 
     player, x, y = generate_level(load_level(level_name))
-    start_control = control
     running = True
+    start_control = control
     clock = pygame.time.Clock()
     while running:
         for event in pygame.event.get():
@@ -207,6 +217,7 @@ def start_game(level_name):
                 gave_achievement.empty()
                 tile_let_group.empty()
                 player_group.empty()
+                finish_group.empty()
                 return
             if pygame.key.get_pressed():
                 all_sprites.update(pygame.key.get_pressed())
@@ -221,6 +232,7 @@ def start_game(level_name):
             achievements_group.draw(screen)
             gave_achievement.draw(screen)
             tile_let_group.draw(screen)
+            finish_group.draw(screen)
             player_group.draw(screen)
             if pygame.mouse.get_focused():
                 arrow_sprite.draw(screen)
