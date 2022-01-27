@@ -9,6 +9,7 @@ score = 0
 counter = 0
 control = 1
 received_pos = []
+pr_control = True
 level_names = ["level_1.txt", "level_2.txt", "level_3.txt"]
 music_names = ["level_1.mp3", "level_2.mp3", "level_3.mp3"]
 
@@ -148,9 +149,9 @@ class Player(pygame.sprite.Sprite):
 
         if pygame.sprite.spritecollideany(self, achievements_group):
             if (self.rect.x, self.rect.y) not in received_pos:
-                fire_sound = pygame.mixer.Sound(os.path.join("music", "fire_sounds.mp3"))
-                fire_sound.set_volume(0.03)
-                fire_sound.play()
+                #fire_sound = pygame.mixer.Sound(os.path.join("music", "fire_sounds.mp3"))
+                #fire_sound.set_volume(0.03)
+                #fire_sound.play()
                 score += 1
                 received_pos.append((self.rect.x, self.rect.y))
             GaveAchievement('empty', self.rect.x, self.rect.y)
@@ -194,7 +195,7 @@ Border(width + 25, 0, width + 25, height)
 
 def level_controller():
     """generation level"""
-    global control, level_names, score, counter
+    global control, level_names, score, counter, pr_control
 
     if control == 1:
         start_game(level_names[0], music_names[0])
@@ -202,34 +203,35 @@ def level_controller():
         start_game(level_names[1], music_names[1])
     if control == 3:
         start_game(level_names[2], music_names[2])
-    background = load_image("bg_end.jpg")
-    run = True
-    while run:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                terminate()
-                run = False
-            if event.type == pygame.MOUSEMOTION:
-                x, y = event.pos
-                arrow_sprite.update(x, y)
-        if run:
-            screen.blit(background, (0, 0))
-            text("Game over", 190, 170, 120, font_color=(0, 0, 0))
-            text(f"Your results: ", 200, 450, 90, font_color=(0, 0, 0))
-            text(f"{score} score", 290, 510, 80, font_color=(0, 0, 0))
-            text(f"{counter // 60} seconds", 290, 560, 80, font_color=(0, 0, 0))
-            if pygame.mouse.get_focused():
-                arrow_sprite.draw(screen)
-            pygame.display.flip()
+    if pr_control:
+        background = load_image("bg_end.jpg")
+        run = True
+        while run:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pr_control  = terminate()
+                    run = False
+                if event.type == pygame.MOUSEMOTION:
+                    x, y = event.pos
+                    arrow_sprite.update(x, y)
+            if run:
+                screen.blit(background, (0, 0))
+                text("Game over", 190, 170, 120, font_color=(0, 0, 0))
+                text(f"Your results: ", 200, 450, 90, font_color=(0, 0, 0))
+                text(f"{score} score", 290, 510, 80, font_color=(0, 0, 0))
+                text(f"{counter // 60} seconds", 290, 560, 80, font_color=(0, 0, 0))
+                if pygame.mouse.get_focused():
+                    arrow_sprite.draw(screen)
+                pygame.display.flip()
 
 
 def start_game(level_name, music_name):
     """основная игра"""
-    global counter, score, received_pos
+    global counter, score, received_pos, pr_control
 
-    pygame.mixer.music.load(os.path.join("music", music_name))
-    pygame.mixer.music.play(loops=-1)
-    pygame.mixer.music.set_volume(0.2)
+    #pygame.mixer.music.load(os.path.join("music", music_name))
+    #pygame.mixer.music.play(loops=-1)
+    #pygame.mixer.music.set_volume(0.2)
 
     player, x, y = generate_level(load_level(level_name))
     running = True
@@ -238,10 +240,6 @@ def start_game(level_name, music_name):
     clock = pygame.time.Clock()
     while running:
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-                terminate(score, counter)
-                break
             if start_control != control:
                 bg_group.empty()
                 achievements_group.empty()
@@ -259,7 +257,7 @@ def start_game(level_name, music_name):
                 arrow_sprite.update(x, y)
             if event.type == pygame.QUIT:
                 running = False
-                terminate()
+                pr_control = terminate()
         if running:
             bg_group.draw(screen)
             achievements_group.draw(screen)

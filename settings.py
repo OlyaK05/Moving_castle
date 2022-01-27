@@ -3,6 +3,7 @@ import sys
 import pygame
 import sqlite3
 
+pr_control = True
 pygame.init()
 size = width, height = 750, 700
 screen = pygame.display.set_mode(size)
@@ -10,9 +11,10 @@ screen = pygame.display.set_mode(size)
 
 def text(message, x, y, font_size=75, font_type='shrift.otf', font_color=(255, 255, 255)):
     """функция вывода текста на surface"""
-    font_result = pygame.font.Font(font_type, font_size)
-    texts = font_result.render(message, True, font_color)
-    screen.blit(texts, (x, y))
+    if pr_control:
+       font_result = pygame.font.Font(font_type, font_size)
+       texts = font_result.render(message, True, font_color)
+       screen.blit(texts, (x, y))
 
 
 def load_image(name, colorkey=None):
@@ -69,13 +71,15 @@ class BaseDate:
 
 
 def terminate(score=0, counter=0):
+    global pr_control
+    pr_control = False
+    name = ""
+    db = BaseDate()
     db.append_score(score, counter)
     db.close_db()
     pygame.quit()
+    return False
 
-
-name = ""
-db = BaseDate()
 
 arrow_sprite = pygame.sprite.Group()
 Arrow(arrow_sprite)
