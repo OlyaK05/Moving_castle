@@ -7,7 +7,7 @@ size = width, height = 750, 700
 screen = pygame.display.set_mode(size)
 
 
-def text(message, x, y, font_size=75, font_type='shrift.otf', font_color=(0, 0, 0)):
+def text(message, x, y, font_size=75, font_type='shrift.otf', font_color=(255, 255, 255)):
     """функция вывода текста на surface"""
     font_result = pygame.font.Font(font_type, font_size)
     texts = font_result.render(message, True, font_color)
@@ -56,8 +56,8 @@ class BaseDate:
         self.con = sqlite3.connect("DB_results.db")
         self.cur = self.con.cursor()
 
-    def append_and_get_best_score(self, score, time):
-        """добавление новых значений и возвращение лучшего результата"""
+    def append_score(self, score, time):
+        """добавление новых значений"""
         s = [score, time]
         self.cur.execute("""INSERT INTO results VALUES (?, ?)""", s)
         result = self.cur.execute("""SELECT Score, Time FROM results """).fetchall()

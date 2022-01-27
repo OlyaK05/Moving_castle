@@ -32,7 +32,7 @@ def generate_level(level):
             elif level[y][x] == "#":
                 Let('wall', x, y)
             elif level[y][x] == "*":
-                BackGround('lake', x, y)
+                Water('lake', x, y)
             elif level[y][x] == "a":
                 Achievement('achievements', x, y)
             elif level[y][x] == "W":
@@ -84,10 +84,21 @@ class BackGround(pygame.sprite.Sprite):
 
 
 class Let(pygame.sprite.Sprite):
+    global control
     """расположение препятствий"""
 
     def __init__(self, tile_type, pos_x, pos_y):
         super().__init__(tile_let_group)
+        if control % 2 == 0:
+            self.image = load_image("wall.jpg")
+        else:
+            self.image = tile_images[tile_type]
+        self.rect = self.image.get_rect().move(pos_x * tile_width, pos_y * tile_height)
+
+
+class Water(pygame.sprite.Sprite):
+    def __init__(self, tile_type, pos_x, pos_y):
+        super().__init__(water_let)
         self.image = tile_images[tile_type]
         self.rect = self.image.get_rect().move(pos_x * tile_width, pos_y * tile_height)
 
@@ -113,7 +124,7 @@ class Player(pygame.sprite.Sprite):
 
     def update(self, action):
         """перемещение героя по карте"""
-        global score, control
+        global score, control, counter
 
         x, y = 0, 0
         if action[pygame.K_UP]:
@@ -143,7 +154,8 @@ class Player(pygame.sprite.Sprite):
                 score += 1
                 received_pos.append((self.rect.x, self.rect.y))
             GaveAchievement('empty', self.rect.x, self.rect.y)
-
+        if pygame.sprite.spritecollideany(self, water_let):
+            counter += 300
         if pygame.sprite.spritecollideany(self, finish_group):
             control += 1
 
@@ -151,8 +163,8 @@ class Player(pygame.sprite.Sprite):
 tile_images = {
 
     'empty': load_image("grass.jpg"),  # элементы игрового поля
-    'wall': load_image("wall_2.jpg"),
     'lake': load_image("lake.jpg"),
+    'wall': load_image("wall_2.jpg"),
     'fireplace': load_image("fireplace.jpg"),
     'achievements': load_image("firewood.jpg")
 
@@ -218,7 +230,9 @@ def start_game(level_name, music_name):
                 achievements_group.empty()
                 gave_achievement.empty()
                 tile_let_group.empty()
+                all_sprites.empty()
                 player_group.empty()
+                water_let.empty()
                 finish_group.empty()
                 return
             if pygame.key.get_pressed():
@@ -234,12 +248,13 @@ def start_game(level_name, music_name):
             achievements_group.draw(screen)
             gave_achievement.draw(screen)
             tile_let_group.draw(screen)
+            water_let.draw((screen))
             finish_group.draw(screen)
             player_group.draw(screen)
             if pygame.mouse.get_focused():
                 arrow_sprite.draw(screen)
-            text(f"Time: {counter // 60}", 5, 5, 21, None, (255, 255, 255))
-            text(f"score: {score}", 85, 5, 21, None, (255, 255, 255))
+            text(f"Time: {counter // 60}", 5, 5, 21, None)
+            text(f"score: {score}", 85, 5, 21, None)
             counter += 1
             pygame.display.flip()
             clock.tick(60)

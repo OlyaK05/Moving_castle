@@ -67,7 +67,8 @@ def show_menu():
                 arrow_sprite.update(x, y)
         if demonstration:
             screen.blit(background, (0, 0))
-            text("Moving Castle,", 200, 70, 100)
+            text("Moving Castle,", 190, 70, 100, font_color=(0, 0, 0))
+            text("Moving Castle,", 193, 70, 100)
             button_start.draw(300, 270, "Start", 70)
             button_info.draw(300, 390, "Info", 70)
             button_story.draw(10, 600, "Story", 40)
@@ -92,6 +93,15 @@ def info():
         if running:
             screen.blit(background, (0, 0))
             button_enter.draw(675, 10, "Enter", 40)
+            text("Rules of the game", 200, 20, 90)
+            text("1. Игра состоит из трёх уровней.", 10, 380, 32, None)
+            text("2. На каждом уровне нужно собирать дрова(это будут очки)", 10, 410, 31, None)
+            text("3. Для перехода на следующий уровень необходимо попасть", 10, 440, 31, None)
+            text("на картинку с огнём", 10, 460, 31, None)
+            text("4. Если игрок попадает на воду, то к итоговому времени", 10, 570, 31, None)
+            text("прибавляется +10 секунд", 10, 590, 31, None)
+            text("5. Цель игры - пройти все уровни за минимальное время", 10, 630, 31, None)
+            text("с наибольшим числом очков.", 10, 650, 31, None)
             if pygame.mouse.get_focused():
                 arrow_sprite.draw(screen)
             pygame.display.flip()
