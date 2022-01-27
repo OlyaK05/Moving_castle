@@ -53,29 +53,29 @@ class BaseDate:
     """работа с базой данных"""
 
     def __init__(self):
-        self.con = sqlite3.connect("DB_results.db")
+        self.con = sqlite3.connect("db_results.db")
         self.cur = self.con.cursor()
 
     def append_score(self, score, time):
         """добавление новых значений"""
-        s = [score, time]
+        s = [score, time // 60]
         self.cur.execute("""INSERT INTO results VALUES (?, ?)""", s)
-        result = self.cur.execute("""SELECT Score, Time FROM results """).fetchall()
         self.con.commit()
-        return sorted(result, key=lambda x: (x[0], -x[1]), reverse=True)[0]
+        return
 
     def close_db(self):
         self.con.close()
 
 
-def terminate():
+def terminate(score=0, counter=0):
+    db.append_score(score, counter)
     db.close_db()
     pygame.quit()
     return
 
 
-arrow_sprite = pygame.sprite.Group()
-Arrow(arrow_sprite)
-
 name = ""
 db = BaseDate()
+
+arrow_sprite = pygame.sprite.Group()
+Arrow(arrow_sprite)

@@ -223,7 +223,7 @@ def start_game(level_name, music_name):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-                terminate()
+                terminate(score, counter)
                 break
             if start_control != control:
                 bg_group.empty()
