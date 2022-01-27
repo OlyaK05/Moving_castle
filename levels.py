@@ -194,7 +194,7 @@ Border(width + 25, 0, width + 25, height)
 
 def level_controller():
     """generation level"""
-    global control, level_names
+    global control, level_names, score, counter
 
     if control == 1:
         start_game(level_names[0], music_names[0])
@@ -202,8 +202,25 @@ def level_controller():
         start_game(level_names[1], music_names[1])
     if control == 3:
         start_game(level_names[2], music_names[2])
-    terminate()
-    # return
+    background = load_image("bg_end.jpg")
+    run = True
+    while run:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+                run = False
+            if event.type == pygame.MOUSEMOTION:
+                x, y = event.pos
+                arrow_sprite.update(x, y)
+        if run:
+            screen.blit(background, (0, 0))
+            text("Game over", 190, 170, 120, font_color=(0, 0, 0))
+            text(f"Your results: ", 200, 450, 90, font_color=(0, 0, 0))
+            text(f"{score} score", 290, 510, 80, font_color=(0, 0, 0))
+            text(f"{counter // 60} seconds", 290, 560, 80, font_color=(0, 0, 0))
+            if pygame.mouse.get_focused():
+                arrow_sprite.draw(screen)
+            pygame.display.flip()
 
 
 def start_game(level_name, music_name):

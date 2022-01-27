@@ -3,6 +3,7 @@ import sys
 import pygame
 import sqlite3
 
+pygame.init()
 size = width, height = 750, 700
 screen = pygame.display.set_mode(size)
 
@@ -71,7 +72,6 @@ def terminate(score=0, counter=0):
     db.append_score(score, counter)
     db.close_db()
     pygame.quit()
-    return
 
 
 name = ""
