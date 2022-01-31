@@ -11,10 +11,9 @@ screen = pygame.display.set_mode(size)
 
 def text(message, x, y, font_size=75, font_type='shrift.otf', font_color=(255, 255, 255)):
     """функция вывода текста на surface"""
-    if pr_control:
-       font_result = pygame.font.Font(font_type, font_size)
-       texts = font_result.render(message, True, font_color)
-       screen.blit(texts, (x, y))
+    font_result = pygame.font.Font(font_type, font_size)
+    texts = font_result.render(message, True, font_color)
+    screen.blit(texts, (x, y))
 
 
 def load_image(name, colorkey=None):

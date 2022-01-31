@@ -126,7 +126,6 @@ class Player(pygame.sprite.Sprite):
     def update(self, action):
         """перемещение героя по карте"""
         global score, control, counter
-
         x, y = 0, 0
         if action[pygame.K_UP]:
             y = -25
@@ -149,9 +148,9 @@ class Player(pygame.sprite.Sprite):
 
         if pygame.sprite.spritecollideany(self, achievements_group):
             if (self.rect.x, self.rect.y) not in received_pos:
-                #fire_sound = pygame.mixer.Sound(os.path.join("music", "fire_sounds.mp3"))
-                #fire_sound.set_volume(0.03)
-                #fire_sound.play()
+                fire_sound = pygame.mixer.Sound(os.path.join("music", "fire_sounds.mp3"))
+                fire_sound.set_volume(0.03)
+                fire_sound.play()
                 score += 1
                 received_pos.append((self.rect.x, self.rect.y))
             GaveAchievement('empty', self.rect.x, self.rect.y)
@@ -209,7 +208,7 @@ def level_controller():
         while run:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    pr_control  = terminate()
+                    pr_control = terminate()
                     run = False
                 if event.type == pygame.MOUSEMOTION:
                     x, y = event.pos
@@ -229,9 +228,9 @@ def start_game(level_name, music_name):
     """основная игра"""
     global counter, score, received_pos, pr_control
 
-    #pygame.mixer.music.load(os.path.join("music", music_name))
-    #pygame.mixer.music.play(loops=-1)
-    #pygame.mixer.music.set_volume(0.2)
+    pygame.mixer.music.load(os.path.join("music", music_name))
+    pygame.mixer.music.play(loops=-1)
+    pygame.mixer.music.set_volume(0.2)
 
     player, x, y = generate_level(load_level(level_name))
     running = True
