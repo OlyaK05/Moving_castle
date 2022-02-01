@@ -34,8 +34,8 @@ def show_menu():
                                                 manager=manager)
 
     background = load_image("bg (1).jpg")
-    #pygame.mixer.music.load(os.path.join("music", "sky_walk.mp3"))
-    #pygame.mixer.music.play(loops=-1)
+    # pygame.mixer.music.load(os.path.join("music", "sky_walk.mp3"))
+    # pygame.mixer.music.play(loops=-1)
 
     demonstration = True
     while demonstration:
@@ -56,19 +56,20 @@ def show_menu():
                 elif event.ui_element == info_button:
                     info()
                 elif event.ui_element == story_button:
-                    webbrowser.open('https://ru.wikipedia.org/wiki/%D0%A5%D0%BE%D0%B4%D1%8F%D1%87%D0%B8%D0%B9_%D0%B7%D0'
-                                    '%B0%D0%BC%D0%BE%D0%BA_(%D0%B0%D0%BD%D0%B8%D0%BC%D0%B5)', new=2)
-
+                    webbrowser.open(
+                        'https://ru.wikipedia.org/wiki/%D0%A5%D0%BE%D0%B4%D1%8F%D1%87%D0%B8%D0%B9_%D0%B7%D0'
+                        '%B0%D0%BC%D0%BE%D0%BA_(%D0%B0%D0%BD%D0%B8%D0%BC%D0%B5)', new=2)
+            if pr_control:
+                manager.process_events(event)
         if demonstration and pr_control:
             manager.update(time_delta)
             screen.blit(background, (0, 0))
             text("Moving Castle,", 190, 70, 100, font_color=(0, 0, 0))
             text("Moving Castle,", 193, 70, 100)
-            manager.process_events(event)
             manager.draw_ui(screen)
             if pygame.mouse.get_focused():
                 arrow_sprite.draw(screen)
-                pygame.display.update()
+            pygame.display.update()
 
 
 def info():
@@ -81,8 +82,8 @@ def info():
     running = True
     background = load_image("background_info.jpg")
     while running:
+        time_delta = clock.tick(60) / 1000.0
         for event in pygame.event.get():
-            time_delta = clock.tick(60) / 1000.0
             if event.type == pygame.QUIT:
                 running = False
                 pr_control = terminate()
@@ -95,7 +96,8 @@ def info():
                 sound_button_click()
                 if event.ui_element == enter_button:
                     show_menu()
-
+            if pr_control:
+                manager_info.process_events(event)
         if running and pr_control:
             manager_info.update(time_delta)
             screen.blit(background, (0, 0))
@@ -108,7 +110,6 @@ def info():
             text("прибавляется +10 секунд", 10, 590, 31, None)
             text("5. Цель игры - пройти все уровни за минимальное время", 10, 630, 31, None)
             text("с наибольшим числом очков.", 10, 650, 31, None)
-            manager_info.process_events(event)
             manager_info.draw_ui(screen)
             if pygame.mouse.get_focused():
                 arrow_sprite.draw(screen)
