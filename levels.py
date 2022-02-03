@@ -11,6 +11,7 @@ received_pos = []
 pr_control = True
 level_names = ["level_1.txt", "level_2.txt", "level_3.txt"]
 music_names = ["level_1.mp3", "level_2.mp3", "level_3.mp3"]
+next_step = [12, 31, 31]
 
 
 def load_level(filename):
@@ -155,7 +156,7 @@ class Player(pygame.sprite.Sprite):
             GaveAchievement('empty', self.rect.x, self.rect.y)
         if pygame.sprite.spritecollideany(self, water_let):
             counter += 300
-        if pygame.sprite.spritecollideany(self, finish_group):
+        if pygame.sprite.spritecollideany(self, finish_group) and next_step[control - 1] == score:
             control += 1
 
 

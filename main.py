@@ -17,10 +17,10 @@ def show_menu():
     """основное меню игры"""
 
     manager = pygame_gui.UIManager((width, height))
-    start_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((300, 270), (130, 100)),
+    start_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((300, 270), (130, 80)),
                                                 text='Start',
                                                 manager=manager)
-    info_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((300, 390), (130, 100)),
+    info_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((300, 390), (130, 80)),
                                                text='Info',
                                                manager=manager)
     story_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((10, 600), (80, 50)),
