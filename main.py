@@ -50,7 +50,7 @@ def show_menu():
                 arrow_sprite.update(x, y)
 
             if event.type == pygame_gui.UI_BUTTON_PRESSED:
-                sound_button_click()
+                #sound_button_click()
                 if event.ui_element == start_button:
                     level_controller()
                 elif event.ui_element == info_button:

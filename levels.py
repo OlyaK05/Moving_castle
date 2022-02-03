@@ -228,9 +228,9 @@ def start_game(level_name, music_name):
     """основная игра"""
     global counter, score, received_pos, pr_control
 
-    pygame.mixer.music.load(os.path.join("music", music_name))
-    pygame.mixer.music.play(loops=-1)
-    pygame.mixer.music.set_volume(0.2)
+    #pygame.mixer.music.load(os.path.join("music", music_name))
+    #pygame.mixer.music.play(loops=-1)
+    #pygame.mixer.music.set_volume(0.2)
 
     player, x, y = generate_level(load_level(level_name))
     running = True
