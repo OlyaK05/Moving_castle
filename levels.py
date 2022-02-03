@@ -1,13 +1,12 @@
 import os
 import pygame
-from settings import load_image, width, height, arrow_sprite, text, screen, terminate
-
+import pygame_gui
+from settings import load_image, width, height, arrow_sprite, text, screen, sound_button_click, control, save_results
 pygame.init()
 pygame.mouse.set_visible(False)
 
 score = 0
 counter = 0
-control = 1
 received_pos = []
 pr_control = True
 level_names = ["level_1.txt", "level_2.txt", "level_3.txt"]
@@ -194,43 +193,79 @@ Border(width + 25, 0, width + 25, height)
 
 def level_controller():
     """generation level"""
-    global control, level_names, score, counter, pr_control
+    global control, level_names, pr_control, score, counter
 
+    score = 0
+    counter = 0
     if control == 1:
-        start_game(level_names[0], music_names[0])
+        if start_game(level_names[0], music_names[0]) == 0:
+            return 0
     if control == 2:
-        start_game(level_names[1], music_names[1])
+        if start_game(level_names[1], music_names[1]) == 0:
+            return 0
     if control == 3:
-        start_game(level_names[2], music_names[2])
+        if start_game(level_names[2], music_names[2]) == 0:
+            return 0
     if pr_control:
+        manager = pygame_gui.UIManager((width, height))
+        menu_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((10, 10), (140, 50)),
+                                                   text='back to menu',
+                                                   manager=manager)
+        result_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((600, 10), (140, 50)),
+                                                     text='save results',
+                                                     manager=manager)
         background = load_image("bg_end.jpg")
+        clock = pygame.time.Clock()
         run = True
         while run:
+            time_delta = clock.tick(60) / 1000.0
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    pr_control = terminate()
                     run = False
+                    return 0
+                if event.type == pygame_gui.UI_BUTTON_PRESSED:
+                    sound_button_click()
+                    if event.ui_element == menu_button:
+                        clear_sprites()
+                        control = 1
+                        return
+                    if event.ui_element == result_button:
+                        save_results(score, counter)
                 if event.type == pygame.MOUSEMOTION:
                     x, y = event.pos
                     arrow_sprite.update(x, y)
+                manager.process_events(event)
             if run:
+                manager.update(time_delta)
                 screen.blit(background, (0, 0))
                 text("Game over", 190, 170, 120, font_color=(0, 0, 0))
-                text(f"Your results: ", 200, 450, 90, font_color=(0, 0, 0))
+                text(f"Your results: ", 220, 450, 90, font_color=(0, 0, 0))
                 text(f"{score} score", 290, 510, 80, font_color=(0, 0, 0))
                 text(f"{counter // 60} seconds", 290, 560, 80, font_color=(0, 0, 0))
+                manager.draw_ui(screen)
                 if pygame.mouse.get_focused():
                     arrow_sprite.draw(screen)
-                pygame.display.flip()
+                pygame.display.update()
+
+
+def clear_sprites():
+    bg_group.empty()
+    achievements_group.empty()
+    gave_achievement.empty()
+    tile_let_group.empty()
+    all_sprites.empty()
+    player_group.empty()
+    water_let.empty()
+    finish_group.empty()
 
 
 def start_game(level_name, music_name):
     """основная игра"""
     global counter, score, received_pos, pr_control
 
-    #pygame.mixer.music.load(os.path.join("music", music_name))
-    #pygame.mixer.music.play(loops=-1)
-    #pygame.mixer.music.set_volume(0.2)
+    pygame.mixer.music.load(os.path.join("music", music_name))
+    pygame.mixer.music.play(loops=-1)
+    pygame.mixer.music.set_volume(0.2)
 
     player, x, y = generate_level(load_level(level_name))
     running = True
@@ -240,14 +275,7 @@ def start_game(level_name, music_name):
     while running:
         for event in pygame.event.get():
             if start_control != control:
-                bg_group.empty()
-                achievements_group.empty()
-                gave_achievement.empty()
-                tile_let_group.empty()
-                all_sprites.empty()
-                player_group.empty()
-                water_let.empty()
-                finish_group.empty()
+                clear_sprites()
                 return
             if pygame.key.get_pressed():
                 all_sprites.update(pygame.key.get_pressed())
@@ -256,7 +284,7 @@ def start_game(level_name, music_name):
                 arrow_sprite.update(x, y)
             if event.type == pygame.QUIT:
                 running = False
-                pr_control = terminate()
+                return 0
         if running:
             bg_group.draw(screen)
             achievements_group.draw(screen)

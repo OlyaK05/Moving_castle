@@ -3,8 +3,11 @@ import sys
 import pygame
 import sqlite3
 
-pr_control = True
+copy_score = 0
+copy_count = 0
+control = 1
 pygame.init()
+pr_control = True
 size = width, height = 750, 700
 screen = pygame.display.set_mode(size)
 
@@ -14,6 +17,17 @@ def text(message, x, y, font_size=75, font_type='shrift.otf', font_color=(255, 2
     font_result = pygame.font.Font(font_type, font_size)
     texts = font_result.render(message, True, font_color)
     screen.blit(texts, (x, y))
+
+
+def sound_button_click():
+    button_sound = pygame.mixer.Sound(os.path.join("music", "button_sound.mp3"))
+    button_sound.set_volume(0.1)
+    button_sound.play()
+
+
+def main_music():
+    pygame.mixer.music.load(os.path.join("music", "sky_walk.mp3"))
+    pygame.mixer.music.play(loops=-1)
 
 
 def load_image(name, colorkey=None):
@@ -69,16 +83,20 @@ class BaseDate:
         self.con.close()
 
 
-def terminate(score=0, counter=0):
-    global pr_control
+def save_results(score, counter):
+    global db, copy_score, copy_count
+    if score != copy_score or counter != copy_count:
+         db.append_score(score, counter)
+    copy_score, copy_count = score, counter
+
+
+def terminate():
+    global db, pr_control
     pr_control = False
-    name = ""
-    db = BaseDate()
-    db.append_score(score, counter)
     db.close_db()
     pygame.quit()
-    return False
 
 
+db = BaseDate()
 arrow_sprite = pygame.sprite.Group()
 Arrow(arrow_sprite)
