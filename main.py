@@ -27,7 +27,7 @@ def show_menu():
                                                 text='Story',
                                                 manager=manager)
     main_music()
-    background = load_image("bg (1).jpg")
+    background = load_image("bg.jpg")
     demonstration = True
     while demonstration:
         time_delta = clock.tick(60) / 1000.0

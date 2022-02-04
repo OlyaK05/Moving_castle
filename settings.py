@@ -74,7 +74,7 @@ class BaseDate:
 
     def append_score(self, score, time):
         """добавление новых значений"""
-        s = [score, time // 60]
+        s = [score, time//60]
         self.cur.execute("""INSERT INTO results VALUES (?, ?)""", s)
         self.con.commit()
         return

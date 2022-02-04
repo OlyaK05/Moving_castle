@@ -11,7 +11,7 @@ received_pos = []
 pr_control = True
 level_names = ["level_1.txt", "level_2.txt", "level_3.txt"]
 music_names = ["level_1.mp3", "level_2.mp3", "level_3.mp3"]
-next_step = [12, 31, 31]
+next_step = [12, 31, 54]
 
 
 def load_level(filename):
@@ -149,13 +149,13 @@ class Player(pygame.sprite.Sprite):
         if pygame.sprite.spritecollideany(self, achievements_group):
             if (self.rect.x, self.rect.y) not in received_pos:
                 fire_sound = pygame.mixer.Sound(os.path.join("music", "fire_sounds.mp3"))
-                fire_sound.set_volume(0.03)
+                fire_sound.set_volume(0.04)
                 fire_sound.play()
                 score += 1
                 received_pos.append((self.rect.x, self.rect.y))
             GaveAchievement('empty', self.rect.x, self.rect.y)
         if pygame.sprite.spritecollideany(self, water_let):
-            counter += 300
+            counter += 267
         if pygame.sprite.spritecollideany(self, finish_group) and next_step[control - 1] == score:
             control += 1
 
@@ -215,6 +215,8 @@ def level_controller():
         result_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((600, 10), (140, 50)),
                                                      text='save results',
                                                      manager=manager)
+        pygame.mixer.music.load(os.path.join("music", "end.mp3"))
+        pygame.mixer.music.play(loops=-1)
         background = load_image("bg_end.jpg")
         clock = pygame.time.Clock()
         run = True
@@ -240,9 +242,8 @@ def level_controller():
                 manager.update(time_delta)
                 screen.blit(background, (0, 0))
                 text("Game over", 190, 170, 120, font_color=(0, 0, 0))
-                text(f"Your results: ", 220, 450, 90, font_color=(0, 0, 0))
-                text(f"{score} score", 290, 510, 80, font_color=(0, 0, 0))
-                text(f"{counter // 60} seconds", 290, 560, 80, font_color=(0, 0, 0))
+                text(f"Your result", 230, 450, 90, font_color=(0, 0, 0))
+                text(f"{counter//60} seconds", 290, 510, 80, font_color=(0, 0, 0))
                 manager.draw_ui(screen)
                 if pygame.mouse.get_focused():
                     arrow_sprite.draw(screen)
@@ -291,7 +292,7 @@ def start_game(level_name, music_name):
             achievements_group.draw(screen)
             gave_achievement.draw(screen)
             tile_let_group.draw(screen)
-            water_let.draw((screen))
+            water_let.draw(screen)
             finish_group.draw(screen)
             player_group.draw(screen)
             if pygame.mouse.get_focused():
