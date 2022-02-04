@@ -72,12 +72,13 @@ class BaseDate:
         self.con = sqlite3.connect("db_results.db")
         self.cur = self.con.cursor()
 
-    def append_score(self, score, time):
+    def append_and_get_score(self, score, time):
         """добавление новых значений"""
-        s = [score, time//60]
+        s = [score, time // 60]
         self.cur.execute("""INSERT INTO results VALUES (?, ?)""", s)
+        result = self.cur.execute("""SELECT Time FROM results """).fetchall()
         self.con.commit()
-        return
+        return result[-1]
 
     def close_db(self):
         self.con.close()
@@ -86,8 +87,11 @@ class BaseDate:
 def save_results(score, counter):
     global db, copy_score, copy_count
     if score != copy_score or counter != copy_count:
-         db.append_score(score, counter)
+        t = db.append_and_get_score(score, counter)
+        opy_score, copy_count = score, counter
+        return t
     copy_score, copy_count = score, counter
+    return ""
 
 
 def terminate():

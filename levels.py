@@ -219,6 +219,7 @@ def level_controller():
         pygame.mixer.music.play(loops=-1)
         background = load_image("bg_end.jpg")
         clock = pygame.time.Clock()
+        t = ""
         run = True
         while run:
             time_delta = clock.tick(60) / 1000.0
@@ -233,7 +234,7 @@ def level_controller():
                         control = 1
                         return
                     if event.ui_element == result_button:
-                        save_results(score, counter)
+                        t = save_results(score, counter)
                 if event.type == pygame.MOUSEMOTION:
                     x, y = event.pos
                     arrow_sprite.update(x, y)
@@ -243,7 +244,9 @@ def level_controller():
                 screen.blit(background, (0, 0))
                 text("Game over", 190, 170, 120, font_color=(0, 0, 0))
                 text(f"Your result", 230, 450, 90, font_color=(0, 0, 0))
-                text(f"{counter//60} seconds", 290, 510, 80, font_color=(0, 0, 0))
+                text(f"{counter//60} seconds", 290, 515, 80, font_color=(0, 0, 0))
+                if t != "":
+                    text(f"{t}seconds best result", 150, 300, 90, font_color=(0, 0, 0))
                 manager.draw_ui(screen)
                 if pygame.mouse.get_focused():
                     arrow_sprite.draw(screen)
